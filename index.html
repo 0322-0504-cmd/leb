@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trucker Job & Rental</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/workspace/style.css" />
+</head>
+<body>
+    <div class="overlay" id="overlay"></div>
+    <div class="panel" id="panel">
+        <header class="panel__header">
+            <h1 class="title">Trucker Job & Rental</h1>
+            <button class="icon-btn icon-btn--close" id="btnClose" aria-label="Close">×</button>
+        </header>
+
+        <section class="player" id="playerSection">
+            <div class="player__meta">
+                <div class="player__row">
+                    <span class="player__name" id="playerName">Driver</span>
+                    <span class="chip chip--cyan" id="playerLevel">Level 1</span>
+                    <span class="chip chip--tier" id="playerTier">Rookie</span>
+                </div>
+                <div class="exp">
+                    <div class="exp__meta">
+                        <span>EXP</span>
+                        <span id="expText">0 / 100</span>
+                    </div>
+                    <div class="exp__bar">
+                        <div class="exp__fill" id="expFill"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <nav class="tabs" role="tablist">
+            <button class="tab is-active" data-tab="rental" role="tab">Rental</button>
+            <button class="tab" data-tab="jobs" role="tab">Jobs</button>
+            <button class="tab" data-tab="delivery" role="tab">Delivery</button>
+        </nav>
+
+        <main class="content">
+            <!-- Rental -->
+            <section class="view is-active" id="view-rental" role="tabpanel">
+                <div class="carousel">
+                    <button class="carousel__arrow left" id="carPrev" aria-label="Previous">‹</button>
+                    <div class="carousel__stage">
+                        <div class="carousel__track" id="carTrack">
+                            <!-- Slides injected by JS -->
+                        </div>
+                    </div>
+                    <button class="carousel__arrow right" id="carNext" aria-label="Next">›</button>
+                </div>
+                <div class="dots" id="carDots"></div>
+
+                <div class="vehicle" id="vehicleInfo">
+                    <div class="vehicle__name" id="vehicleName">Phantom III</div>
+                    <div class="vehicle__tags">
+                        <span class="chip" id="vehicleType">Trailer</span>
+                        <span class="chip" id="vehicleReq">Req Lv 5</span>
+                        <span class="chip chip--cyan" id="vehicleReward">$2600 • 5-10 XP</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Jobs -->
+            <section class="view" id="view-jobs" role="tabpanel">
+                <div class="jobs">
+                    <div class="job" data-diff="easy">
+                        <div class="job__header">
+                            <span class="job__title">Easy</span>
+                            <span class="chip">Req Lv 1</span>
+                        </div>
+                        <div class="job__desc">Light box delivery • 6 boxes</div>
+                        <div class="job__rewards">
+                            <span class="reward">$800-1200</span>
+                            <span class="reward">+2 XP/box</span>
+                        </div>
+                        <button class="btn btn--green outline" data-action="startJob" data-diff="easy">Start</button>
+                    </div>
+
+                    <div class="job" data-diff="medium">
+                        <div class="job__header">
+                            <span class="job__title">Medium</span>
+                            <span class="chip">Req Lv 3</span>
+                        </div>
+                        <div class="job__desc">City logistics • 10 boxes</div>
+                        <div class="job__rewards">
+                            <span class="reward">$1400-2000</span>
+                            <span class="reward">+2 XP/box</span>
+                        </div>
+                        <button class="btn btn--green outline" data-action="startJob" data-diff="medium">Start</button>
+                    </div>
+
+                    <div class="job" data-diff="hard">
+                        <div class="job__header">
+                            <span class="job__title">Hard</span>
+                            <span class="chip">Req Lv 5</span>
+                        </div>
+                        <div class="job__desc">Trailer haul • 1 trailer</div>
+                        <div class="job__rewards">
+                            <span class="reward">$2200-3200</span>
+                            <span class="reward">+3-10 XP</span>
+                        </div>
+                        <button class="btn btn--green outline" data-action="startJob" data-diff="hard">Start</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Delivery -->
+            <section class="view" id="view-delivery" role="tabpanel">
+                <div class="delivery">
+                    <div class="delivery__row">
+                        <span class="delivery__label">Destination</span>
+                        <span class="delivery__value" id="deliveryDest">—</span>
+                    </div>
+                    <div class="delivery__row">
+                        <span class="delivery__label">Time Left</span>
+                        <span class="delivery__value" id="deliveryTime">00:00</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress__bar">
+                            <div class="progress__fill" id="deliveryFill"></div>
+                        </div>
+                        <div class="progress__meta" id="deliveryMeta">0%</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <button class="btn btn--cyan" id="btnRent">Rent Vehicle</button>
+            <button class="btn btn--green" id="btnStart">Start Job</button>
+            <button class="btn btn--red outline" id="btnCancel">Cancel</button>
+        </footer>
+    </div>
+
+    <script src="/workspace/script.js"></script>
+  </body>
+  </html>
+
