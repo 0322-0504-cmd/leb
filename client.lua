@@ -628,13 +628,20 @@ RegisterNUICallback('rentVehicle', function(data, cb)
         SetVehicleOnGroundProperly(veh)
         local plate = ('TRK%s'):format(math.random(100,999))
         SetVehicleNumberPlateText(veh, plate)
+        
+        -- Wait a moment for plate to be set properly
+        Wait(500)
+        
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
         giveVehicleKeys(veh, plate)
-        -- Register rental vehicle
+        
+        -- Register rental vehicle with delay to ensure proper registration
+        Wait(100)
         TriggerServerEvent('qbx_truckerjob:registerRentedVehicle', plate, vehicleType)
         
         -- Debug: Confirm registration
         print('Registered rental vehicle:', plate, vehicleType)
+        QBCore.Functions.Notify(('Vehicle rented with plate: %s'):format(plate), 'primary')
 
         -- NO auto-attach for trailer jobs - trailer will be at pickup location
     else

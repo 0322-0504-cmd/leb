@@ -1,235 +1,407 @@
-/* Trucker Job & Rental — Enhanced Logic */
+// Modern Trucker Dashboard - Clean & Functional
 
-const UI = {
-  panel: document.getElementById('panel'),
-  overlay: document.getElementById('overlay'),
-  tabs: Array.from(document.querySelectorAll('.tab')),
-  views: {
-    rental: document.getElementById('view-rental'),
-    jobs: document.getElementById('view-jobs'),
-    delivery: document.getElementById('view-delivery'),
-  },
-  playerName: document.getElementById('playerName'),
-  playerLevel: document.getElementById('playerLevel'),
-  playerTier: document.getElementById('playerTier'),
-  expFill: document.getElementById('expFill'),
-  expText: document.getElementById('expText'),
-  carPrev: document.getElementById('carPrev'),
-  carNext: document.getElementById('carNext'),
-  carTrack: document.getElementById('carTrack'),
-  carDots: document.getElementById('carDots'),
-  vehicleName: document.getElementById('vehicleName'),
-  vehicleType: document.getElementById('vehicleType'),
-  vehicleReq: document.getElementById('vehicleReq'),
-  vehicleReward: document.getElementById('vehicleReward'),
-  deliveryDest: document.getElementById('deliveryDest'),
-  deliveryTime: document.getElementById('deliveryTime'),
-  deliveryFill: document.getElementById('deliveryFill'),
-  deliveryMeta: document.getElementById('deliveryMeta'),
-  btnRent: document.getElementById('btnRent'),
-  btnStart: document.getElementById('btnStart'),
-  btnCancel: document.getElementById('btnCancel'),
-  btnClose: document.getElementById('btnClose'),
-};
-
-const state = {
-  isVisible: false,
-  player: { name: 'Driver', level: 1, experience: 0 },
-  vehicles: [
-    { key: 'mule', name: 'Mule', type: 'Box', requiredLevel: 1, rewards: '$800-1200 • +2 XP/box', image: 'images/mule.png', difficulty: 'easy' },
-    { key: 'benson', name: 'Benson', type: 'Box', requiredLevel: 3, rewards: '$1400-2000 • +2 XP/box', image: 'images/benson.png', difficulty: 'medium' },
-    { key: 'phantom3', name: 'Phantom III', type: 'Trailer', requiredLevel: 5, rewards: '$2200-3200 • +3-10 XP', image: 'images/phantom.png', difficulty: 'hard' },
-  ],
-  currentSlide: 0,
-  delivery: { destination: null, progress: 0, timeLeftSec: 0 },
-  currentJobDiff: null,
-  difficulties: null,
-};
-
-function getTier(level) {
-  if (level >= 20) return 'Elite';
-  if (level >= 15) return 'Veteran';
-  if (level >= 10) return 'Pro';
-  if (level >= 5) return 'Skilled';
-  return 'Rookie';
+class TruckerDashboard {
+    constructor() {
+        this.currentTab = 'jobs';
+        this.currentVehicleIndex = 0;
+        this.vehicles = [];
+        this.playerData = null;
+        this.difficulties = null;
+        this.currentJob = null;
+        this.selectedJobDifficulty = null;
+        this.isVisible = false;
+        
+        this.init();
+    }
+    
+    init() {
+        this.bindEvents();
+        this.setupDefaultVehicles();
+        this.hide();
+    }
+    
+    bindEvents() {
+        // Tab switching
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                this.switchTab(e.target.dataset.tab);
+            });
+        });
+        
+        // Close button
+        document.getElementById('closeBtn').addEventListener('click', () => {
+            this.closeNUI();
+        });
+        
+        // Vehicle navigation
+        document.getElementById('prevVehicle').addEventListener('click', () => {
+            this.previousVehicle();
+        });
+        
+        document.getElementById('nextVehicle').addEventListener('click', () => {
+            this.nextVehicle();
+        });
+        
+        // Action buttons
+        document.getElementById('actionBtn').addEventListener('click', () => {
+            this.handleActionButton();
+        });
+        
+        document.getElementById('cancelBtn').addEventListener('click', () => {
+            this.handleCancel();
+        });
+        
+        // Keyboard events
+        document.addEventListener('keydown', (e) => {
+            if (!this.isVisible) return;
+            
+            switch(e.key) {
+                case 'Escape':
+                    this.closeNUI();
+                    break;
+                case 'ArrowLeft':
+                    if (this.currentTab === 'rental') this.previousVehicle();
+                    break;
+                case 'ArrowRight':
+                    if (this.currentTab === 'rental') this.nextVehicle();
+                    break;
+            }
+        });
+    }
+    
+    switchTab(tabName) {
+        // Update tab buttons
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        
+        // Update content
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.getElementById(`${tabName}Content`).classList.add('active');
+        
+        this.currentTab = tabName;
+        this.updateActionButton();
+    }
+    
+    updateActionButton() {
+        const actionBtn = document.getElementById('actionBtn');
+        
+        switch(this.currentTab) {
+            case 'jobs':
+                actionBtn.textContent = this.selectedJobDifficulty ? 'Start Job' : 'Select Job';
+                actionBtn.disabled = !this.selectedJobDifficulty;
+                break;
+            case 'rental':
+                actionBtn.textContent = 'Rent Vehicle';
+                actionBtn.disabled = false;
+                break;
+            case 'delivery':
+                actionBtn.textContent = 'Continue';
+                actionBtn.disabled = false;
+                break;
+        }
+    }
+    
+    handleActionButton() {
+        switch(this.currentTab) {
+            case 'jobs':
+                if (this.selectedJobDifficulty) {
+                    this.startJob(this.selectedJobDifficulty);
+                }
+                break;
+            case 'rental':
+                this.rentVehicle();
+                break;
+        }
+    }
+    
+    handleCancel() {
+        if (this.currentJob) {
+            this.cancelJob();
+        } else {
+            this.closeNUI();
+        }
+    }
+    
+    setupDefaultVehicles() {
+        this.vehicles = [
+            {
+                name: 'Mule Truck',
+                description: 'Compact delivery truck perfect for local routes',
+                image: 'images/mule.png',
+                type: 'mule',
+                difficulty: 'easy',
+                tags: ['Light', 'Easy', 'FREE']
+            },
+            {
+                name: 'Benson Truck', 
+                description: 'Medium truck ideal for citywide logistics',
+                image: 'images/benson.png',
+                type: 'benson',
+                difficulty: 'medium',
+                tags: ['Box', 'Medium', 'FREE']
+            },
+            {
+                name: 'Phantom Truck',
+                description: 'Heavy-duty truck for long-haul deliveries',
+                image: 'images/phantom.png',
+                type: 'phantom3',
+                difficulty: 'hard',
+                tags: ['Trailer', 'Hard', 'FREE']
+            }
+        ];
+        
+        this.updateVehicleDisplay();
+    }
+    
+    previousVehicle() {
+        this.currentVehicleIndex = (this.currentVehicleIndex - 1 + this.vehicles.length) % this.vehicles.length;
+        this.updateVehicleDisplay();
+    }
+    
+    nextVehicle() {
+        this.currentVehicleIndex = (this.currentVehicleIndex + 1) % this.vehicles.length;
+        this.updateVehicleDisplay();
+    }
+    
+    updateVehicleDisplay() {
+        const vehicle = this.vehicles[this.currentVehicleIndex];
+        if (!vehicle) return;
+        
+        document.getElementById('vehicleImage').src = vehicle.image;
+        document.getElementById('vehicleName').textContent = vehicle.name;
+        document.getElementById('vehicleDescription').textContent = vehicle.description;
+        
+        // Update tags
+        const tagsContainer = document.querySelector('.vehicle-tags');
+        tagsContainer.innerHTML = '';
+        vehicle.tags.forEach(tag => {
+            const tagEl = document.createElement('span');
+            tagEl.className = `tag ${tag.toLowerCase() === 'free' ? 'free' : ''}`;
+            tagEl.textContent = tag;
+            tagsContainer.appendChild(tagEl);
+        });
+        
+        // Update counter
+        document.getElementById('currentVehicle').textContent = this.currentVehicleIndex + 1;
+        document.getElementById('totalVehicles').textContent = this.vehicles.length;
+    }
+    
+    updatePlayerInfo(playerData) {
+        this.playerData = playerData;
+        
+        if (playerData) {
+            document.getElementById('playerName').textContent = playerData.name || 'Driver';
+            document.getElementById('playerLevel').textContent = `Level ${playerData.level || 1}`;
+            
+            // Update tier
+            const level = playerData.level || 1;
+            let tier = 'Rookie';
+            if (level >= 20) tier = 'Elite';
+            else if (level >= 10) tier = 'Pro';
+            else if (level >= 5) tier = 'Skilled';
+            
+            document.getElementById('playerTier').textContent = tier;
+            
+            // Update stats
+            document.getElementById('totalDeliveries').textContent = (playerData.total_deliveries || 0).toLocaleString();
+            document.getElementById('totalEarnings').textContent = `$${(playerData.total_earnings || 0).toLocaleString()}`;
+            
+            // Update EXP bar
+            const currentExp = playerData.experience || 0;
+            const requiredExp = (playerData.level || 1) * 100;
+            const expProgress = Math.min(currentExp, requiredExp);
+            const expPercentage = (expProgress / requiredExp) * 100;
+            
+            document.getElementById('expFill').style.width = `${expPercentage}%`;
+            document.getElementById('expText').textContent = `${expProgress} / ${requiredExp} XP`;
+        }
+    }
+    
+    updateJobsList() {
+        const jobsList = document.getElementById('jobsList');
+        if (!this.difficulties) return;
+        
+        jobsList.innerHTML = '';
+        
+        for (const [key, difficulty] of Object.entries(this.difficulties)) {
+            const isUnlocked = !this.playerData || this.playerData.level >= difficulty.requiredLevel;
+            
+            const jobCard = document.createElement('div');
+            jobCard.className = 'job-card';
+            jobCard.dataset.difficulty = key;
+            
+            let expDisplay = '';
+            if (difficulty.type === 'box') {
+                const totalExp = difficulty.boxes * (difficulty.rewards.exp || 2);
+                expDisplay = `${totalExp} XP`;
+            } else if (difficulty.type === 'trailer') {
+                if (Array.isArray(difficulty.rewards.exp)) {
+                    expDisplay = `${difficulty.rewards.exp[0]}-${difficulty.rewards.exp[1]} XP`;
+                } else {
+                    expDisplay = '3-10 XP';
+                }
+            }
+            
+            jobCard.innerHTML = `
+                <div class="job-header">
+                    <div class="job-title">${difficulty.label}</div>
+                    <div class="job-level">Level ${difficulty.requiredLevel}</div>
+                </div>
+                <div class="job-description">
+                    ${difficulty.type === 'trailer' ? 'Trailer delivery job' : `Deliver ${difficulty.boxes} boxes`}
+                </div>
+                <div class="job-rewards">
+                    <span class="job-money">$${difficulty.rewards.money[0]}-${difficulty.rewards.money[1]}</span>
+                    <span class="job-exp">${expDisplay}</span>
+                </div>
+            `;
+            
+            if (isUnlocked) {
+                jobCard.addEventListener('click', () => {
+                    document.querySelectorAll('.job-card').forEach(card => {
+                        card.classList.remove('selected');
+                    });
+                    
+                    jobCard.classList.add('selected');
+                    this.selectedJobDifficulty = key;
+                    this.updateActionButton();
+                });
+            } else {
+                jobCard.style.opacity = '0.5';
+                jobCard.style.cursor = 'not-allowed';
+            }
+            
+            jobsList.appendChild(jobCard);
+        }
+    }
+    
+    startJob(difficulty) {
+        this.sendNUIMessage('startJob', { difficulty: difficulty });
+        document.getElementById('deliveryTab').style.display = 'block';
+        this.switchTab('delivery');
+    }
+    
+    cancelJob() {
+        this.sendNUIMessage('cancelJob');
+        document.getElementById('deliveryTab').style.display = 'none';
+        this.currentJob = null;
+        this.switchTab('jobs');
+    }
+    
+    rentVehicle() {
+        const vehicle = this.vehicles[this.currentVehicleIndex];
+        if (!vehicle) return;
+        
+        const actionBtn = document.getElementById('actionBtn');
+        actionBtn.textContent = 'Renting...';
+        actionBtn.disabled = true;
+        
+        setTimeout(() => {
+            actionBtn.textContent = 'Rent Vehicle';
+            actionBtn.disabled = false;
+        }, 1500);
+        
+        this.sendNUIMessage('rentVehicle', {
+            vehicleType: vehicle.type,
+            difficulty: vehicle.difficulty,
+            vehicleName: vehicle.name
+        });
+    }
+    
+    show() {
+        this.isVisible = true;
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('dashboard').style.display = 'flex';
+    }
+    
+    hide() {
+        this.isVisible = false;
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'none';
+    }
+    
+    closeNUI() {
+        this.hide();
+        this.sendNUIMessage('closeNUI');
+    }
+    
+    sendNUIMessage(action, data = {}) {
+        if (window.invokeNative) {
+            fetch(`https://${GetParentResourceName()}/${action}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).catch(() => {});
+        } else {
+            console.log('NUI Message:', action, data);
+        }
+    }
 }
 
-function setVisible(show) {
-  state.isVisible = !!show;
-  if (show) {
-    UI.panel.style.display = 'grid';
-    UI.overlay.style.display = 'block';
-    UI.panel.classList.remove('is-hidden');
-    UI.overlay.classList.remove('is-hidden');
-  } else {
-    UI.panel.style.display = 'none';
-    UI.overlay.style.display = 'none';
-    UI.panel.classList.add('is-hidden');
-    UI.overlay.classList.add('is-hidden');
-  }
-}
+// Initialize dashboard
+const dashboard = new TruckerDashboard();
 
-function switchTab(tab) {
-  UI.tabs.forEach(t => t.classList.toggle('is-active', t.dataset.tab === tab));
-  Object.entries(UI.views).forEach(([k, el]) => el.classList.toggle('is-active', k === tab));
-}
-
-function updatePlayer(p) {
-  state.player = { ...state.player, ...p };
-  UI.playerName.textContent = state.player.name ?? 'Driver';
-  UI.playerLevel.textContent = `Level ${state.player.level ?? 1}`;
-  UI.playerTier.textContent = getTier(state.player.level ?? 1);
-  const current = state.player.experience ?? 0;
-  const required = Math.max(100, (state.player.level ?? 1) * 100);
-  const pct = Math.min(100, Math.round((current / required) * 100));
-  UI.expFill.style.width = pct + '%';
-  UI.expText.textContent = `${current} / ${required}`;
-}
-
-function buildCarousel() {
-  UI.carTrack.innerHTML = '';
-  UI.carDots.innerHTML = '';
-  state.vehicles.forEach((v, i) => {
-    const slide = document.createElement('div');
-    slide.className = 'carousel__slide';
-    const img = document.createElement('img');
-    img.alt = v.name;
-    img.src = v.image;
-    slide.appendChild(img);
-    UI.carTrack.appendChild(slide);
-    const dot = document.createElement('div');
-    dot.className = 'dot' + (i === state.currentSlide ? ' is-active' : '');
-    dot.addEventListener('click', () => goToSlide(i));
-    UI.carDots.appendChild(dot);
-  });
-  applySlide();
-}
-
-function applySlide() {
-  const offset = -state.currentSlide * 100;
-  UI.carTrack.style.transform = `translateX(${offset}%)`;
-  Array.from(UI.carDots.children).forEach((d, i) => d.classList.toggle('is-active', i === state.currentSlide));
-  const v = state.vehicles[state.currentSlide];
-  if (!v) return;
-  UI.vehicleName.textContent = v.name;
-  UI.vehicleType.textContent = v.type;
-  UI.vehicleReq.textContent = `Req Lv ${v.requiredLevel}`;
-  UI.vehicleReward.textContent = v.rewards;
-}
-
-function nextSlide() {
-  state.currentSlide = (state.currentSlide + 1) % state.vehicles.length;
-  applySlide();
-}
-
-function prevSlide() {
-  state.currentSlide = (state.currentSlide - 1 + state.vehicles.length) % state.vehicles.length;
-  applySlide();
-}
-
-function goToSlide(i) {
-  state.currentSlide = Math.max(0, Math.min(i, state.vehicles.length - 1));
-  applySlide();
-}
-
-function formatTime(sec) {
-  const m = Math.floor(sec / 60).toString().padStart(2, '0');
-  const s = Math.floor(sec % 60).toString().padStart(2, '0');
-  return `${m}:${s}`;
-}
-
-function updateDelivery(d) {
-  state.delivery = { ...state.delivery, ...d };
-  UI.deliveryDest.textContent = state.delivery.destination ?? '—';
-  UI.deliveryTime.textContent = formatTime(state.delivery.timeLeftSec ?? 0);
-  const pct = Math.min(100, Math.max(0, Math.round(state.delivery.progress ?? 0)));
-  UI.deliveryFill.style.width = pct + '%';
-  UI.deliveryMeta.textContent = `${pct}%`;
-}
-
-function startJob(diff) {
-  state.currentJobDiff = diff;
-  postNUI('startJob', { difficulty: diff });
-  switchTab('delivery');
-}
-
-function cancelJob() {
-  state.currentJobDiff = null;
-  postNUI('cancelJob', {});
-}
-
-function rentCurrentVehicle() {
-  const v = state.vehicles[state.currentSlide];
-  if (!v) return;
-  postNUI('rentVehicle', { vehicleType: v.key, difficulty: v.difficulty, vehicleName: v.name });
-}
-
-function postNUI(action, data) {
-  if (window.invokeNative) {
-    fetch(`https://${GetParentResourceName()}/${action}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data || {}),
-    }).catch(() => {});
-  } else {
-    console.log('NUI ->', action, data);
-  }
-}
-
-// Events
-UI.tabs.forEach(tab => tab.addEventListener('click', () => switchTab(tab.dataset.tab)));
-UI.carNext.addEventListener('click', nextSlide);
-UI.carPrev.addEventListener('click', prevSlide);
-UI.btnRent.addEventListener('click', rentCurrentVehicle);
-UI.btnStart.addEventListener('click', () => startJob(state.currentJobDiff || 'easy'));
-UI.btnCancel.addEventListener('click', cancelJob);
-UI.btnClose.addEventListener('click', () => { setVisible(false); postNUI('closeNUI', {}); });
-
-// Messages from Lua
-window.addEventListener('message', (e) => {
-  const d = e.data || {};
-  if (!d.action) return;
-  switch (d.action) {
-    case 'openJobMenu':
-      if (d.playerStats) updatePlayer(d.playerStats);
-      if (d.difficulties) state.difficulties = d.difficulties;
-      setVisible(true);
-      switchTab('jobs');
-      break;
-    case 'openRentMenu':
-      if (d.playerData) updatePlayer(d.playerData);
-      if (Array.isArray(d.vehicles) && d.vehicles.length) {
-        state.vehicles = d.vehicles.map(v => ({
-          key: v.type || v.key || 'mule',
-          name: v.name || (v.type ? v.type.toUpperCase() : 'Truck'),
-          type: v.vehicleType || (v.type === 'phantom3' ? 'Trailer' : 'Box'),
-          requiredLevel: v.requiredLevel ?? 1,
-          rewards: v.rewards || '$$ • XP',
-          image: v.image || `images/${(v.type || 'mule')}.png`,
-          difficulty: v.difficulty || 'easy',
-        }));
-        state.currentSlide = 0;
-        buildCarousel();
-      }
-      setVisible(true);
-      switchTab('rental');
-      break;
-    case 'hideUI':
-      setVisible(false);
-      break;
-    case 'updatePlayer':
-      updatePlayer(d.player || {});
-      break;
-    case 'updateDelivery':
-      updateDelivery(d.delivery || {});
-      break;
-  }
+// Handle messages from Lua
+window.addEventListener('message', (event) => {
+    const data = event.data;
+    
+    switch(data.action) {
+        case 'openJobMenu':
+            dashboard.updatePlayerInfo(data.playerStats);
+            dashboard.difficulties = data.difficulties;
+            dashboard.currentJob = data.currentJob;
+            dashboard.updateJobsList();
+            
+            if (data.currentJob) {
+                document.getElementById('deliveryTab').style.display = 'block';
+                dashboard.switchTab('delivery');
+            } else {
+                document.getElementById('deliveryTab').style.display = 'none';
+                dashboard.switchTab('jobs');
+            }
+            
+            dashboard.show();
+            break;
+            
+        case 'openRentMenu':
+            dashboard.updatePlayerInfo(data.playerData);
+            
+            if (data.vehicles) {
+                dashboard.vehicles = data.vehicles.map(vehicle => ({
+                    name: vehicle.name || vehicle.type.toUpperCase(),
+                    description: vehicle.description || `${vehicle.type} for deliveries`,
+                    image: vehicle.image || `images/${vehicle.type.toLowerCase()}.png`,
+                    type: vehicle.type,
+                    difficulty: vehicle.difficulty,
+                    tags: [
+                        vehicle.difficulty === 'hard' ? 'Trailer' : vehicle.difficulty === 'medium' ? 'Box' : 'Light',
+                        vehicle.difficulty.charAt(0).toUpperCase() + vehicle.difficulty.slice(1),
+                        'FREE'
+                    ]
+                }));
+                dashboard.currentVehicleIndex = 0;
+                dashboard.updateVehicleDisplay();
+            }
+            
+            dashboard.switchTab('rental');
+            dashboard.show();
+            break;
+            
+        case 'hideUI':
+            dashboard.hide();
+            break;
+            
+        case 'updatePlayer':
+            dashboard.updatePlayerInfo(data.playerData);
+            break;
+    }
 });
 
-// Dev preview - DISABLED for FiveM use
+// Development mode - DISABLED
 if (!window.invokeNative) {
-  console.log('Running in development mode - NUI hidden by default');
-  updatePlayer({ name: 'Alex', level: 7, experience: 320 });
-  buildCarousel();
-  // setVisible(true); // REMOVED - Don't auto-show NUI
+    console.log('Development mode - Dashboard hidden');
 }
