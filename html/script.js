@@ -1,5 +1,5 @@
-// Trucker Tablet NUI - Clean and Simple
-class TruckerTabletNUI {
+// Modern Minimalist Trucker NUI
+class MinimalistTruckerNUI {
     constructor() {
         this.currentTab = 'jobs';
         this.currentVehicleIndex = 0;
@@ -15,13 +15,13 @@ class TruckerTabletNUI {
     init() {
         this.bindEvents();
         this.setupDefaultVehicles();
-        this.hide(); // Start hidden
+        this.hide();
     }
     
     bindEvents() {
-        // Tab switching
-        document.querySelectorAll('.nav-tab').forEach(tab => {
-            tab.addEventListener('click', (e) => {
+        // Tab navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
                 this.switchTab(e.target.dataset.tab);
             });
         });
@@ -32,46 +32,42 @@ class TruckerTabletNUI {
         });
         
         // Vehicle navigation
-        document.getElementById('prevVehicleBtn').addEventListener('click', () => {
+        document.getElementById('prevVehicle').addEventListener('click', () => {
             this.previousVehicle();
         });
         
-        document.getElementById('nextVehicleBtn').addEventListener('click', () => {
+        document.getElementById('nextVehicle').addEventListener('click', () => {
             this.nextVehicle();
         });
         
-        // Rent vehicle button
-        document.getElementById('rentVehicleBtn').addEventListener('click', () => {
+        // Actions
+        document.getElementById('rentBtn').addEventListener('click', () => {
             this.rentVehicle();
         });
         
-        // Cancel job button
-        document.getElementById('cancelJobBtn').addEventListener('click', () => {
+        document.getElementById('cancelJob').addEventListener('click', () => {
             this.cancelJob();
         });
         
-        // Keyboard events
+        // Keyboard
         document.addEventListener('keydown', (e) => {
             if (!this.isVisible) return;
-            
-            if (e.key === 'Escape') {
-                this.closeNUI();
-            }
+            if (e.key === 'Escape') this.closeNUI();
         });
     }
     
     switchTab(tabName) {
-        // Update tab buttons
-        document.querySelectorAll('.nav-tab').forEach(tab => {
-            tab.classList.remove('active');
+        // Update nav
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
         });
         document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
         
-        // Update tab content
-        document.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.remove('active');
+        // Update content
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.classList.remove('active');
         });
-        document.getElementById(`${tabName}Content`).classList.add('active');
+        document.getElementById(tabName).classList.add('active');
         
         this.currentTab = tabName;
     }
@@ -79,54 +75,39 @@ class TruckerTabletNUI {
     setupDefaultVehicles() {
         this.vehicles = [
             {
-                name: 'Phantom Truck',
-                description: 'Heavy-duty truck for trailer deliveries',
-                image: 'https://via.placeholder.com/300x150/1a1a1a/3b82f6?text=PHANTOM+TRUCK',
+                name: 'Phantom',
+                description: 'Heavy duty truck',
+                image: 'https://via.placeholder.com/300x100/f8fafc/64748b?text=PHANTOM',
                 type: 'phantom3',
-                difficulty: 'hard',
-                specs: {
-                    type: 'Trailer',
-                    difficulty: 'Hard'
-                }
+                difficulty: 'hard'
             },
             {
-                name: 'Benson Truck',
-                description: 'Medium truck for box deliveries',
-                image: 'https://via.placeholder.com/300x150/1a1a1a/22c55e?text=BENSON+TRUCK',
+                name: 'Benson',
+                description: 'Medium truck',
+                image: 'https://via.placeholder.com/300x100/f8fafc/64748b?text=BENSON',
                 type: 'benson',
-                difficulty: 'medium',
-                specs: {
-                    type: 'Box Truck',
-                    difficulty: 'Medium'
-                }
+                difficulty: 'medium'
             },
             {
-                name: 'Mule Truck',
-                description: 'Light truck for local deliveries',
-                image: 'https://via.placeholder.com/300x150/1a1a1a/f59e0b?text=MULE+TRUCK',
+                name: 'Mule',
+                description: 'Light truck',
+                image: 'https://via.placeholder.com/300x100/f8fafc/64748b?text=MULE',
                 type: 'mule',
-                difficulty: 'easy',
-                specs: {
-                    type: 'Light Truck',
-                    difficulty: 'Easy'
-                }
+                difficulty: 'easy'
             }
         ];
         
         this.updateVehicleDisplay();
-        this.updateVehicleCounter();
     }
     
     previousVehicle() {
         this.currentVehicleIndex = (this.currentVehicleIndex - 1 + this.vehicles.length) % this.vehicles.length;
         this.updateVehicleDisplay();
-        this.updateVehicleCounter();
     }
     
     nextVehicle() {
         this.currentVehicleIndex = (this.currentVehicleIndex + 1) % this.vehicles.length;
         this.updateVehicleDisplay();
-        this.updateVehicleCounter();
     }
     
     updateVehicleDisplay() {
@@ -135,14 +116,26 @@ class TruckerTabletNUI {
         
         document.getElementById('vehicleImage').src = vehicle.image;
         document.getElementById('vehicleName').textContent = vehicle.name;
-        document.getElementById('vehicleDescription').textContent = vehicle.description;
-        document.getElementById('vehicleType').textContent = vehicle.specs.type;
-        document.getElementById('vehicleDifficulty').textContent = vehicle.specs.difficulty;
-    }
-    
-    updateVehicleCounter() {
+        document.getElementById('vehicleDesc').textContent = vehicle.description;
+        document.getElementById('vehicleType').textContent = this.getTypeDisplay(vehicle.difficulty);
+        document.getElementById('vehicleDiff').textContent = this.getDifficultyDisplay(vehicle.difficulty);
+        
+        // Update counter
         document.getElementById('currentVehicle').textContent = this.currentVehicleIndex + 1;
         document.getElementById('totalVehicles').textContent = this.vehicles.length;
+    }
+    
+    getTypeDisplay(difficulty) {
+        const types = {
+            'easy': 'Light',
+            'medium': 'Box',
+            'hard': 'Trailer'
+        };
+        return types[difficulty] || 'Truck';
+    }
+    
+    getDifficultyDisplay(difficulty) {
+        return difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
     }
     
     updatePlayerInfo(playerData) {
@@ -154,14 +147,14 @@ class TruckerTabletNUI {
             document.getElementById('totalDeliveries').textContent = (playerData.total_deliveries || 0).toLocaleString();
             document.getElementById('totalEarnings').textContent = `$${(playerData.total_earnings || 0).toLocaleString()}`;
             
-            // Update EXP bar
+            // Update EXP
             const currentExp = playerData.experience || 0;
             const requiredExp = (playerData.level || 1) * 100;
             const expProgress = Math.min(currentExp, requiredExp);
             const expPercentage = (expProgress / requiredExp) * 100;
             
             document.getElementById('expFill').style.width = `${expPercentage}%`;
-            document.getElementById('expText').textContent = `${expProgress} / ${requiredExp} XP`;
+            document.getElementById('expText').textContent = `${expProgress} / ${requiredExp}`;
         }
     }
     
@@ -175,8 +168,8 @@ class TruckerTabletNUI {
             const isUnlocked = !this.playerData || this.playerData.level >= difficulty.requiredLevel;
             const isActive = this.currentJob && this.currentJob.difficulty === key;
             
-            const jobCard = document.createElement('div');
-            jobCard.className = 'job-card';
+            const jobItem = document.createElement('div');
+            jobItem.className = `job-item ${!isUnlocked || isActive ? 'disabled' : ''}`;
             
             let expDisplay = '';
             if (difficulty.type === 'box') {
@@ -190,10 +183,10 @@ class TruckerTabletNUI {
                 }
             }
             
-            jobCard.innerHTML = `
+            jobItem.innerHTML = `
                 <div class="job-title">${difficulty.label}</div>
-                <div class="job-description">
-                    ${difficulty.type === 'trailer' ? 'Trailer delivery job' : `Deliver ${difficulty.boxes} boxes`}
+                <div class="job-desc">
+                    ${difficulty.type === 'trailer' ? 'Trailer delivery' : `${difficulty.boxes} boxes delivery`}
                 </div>
                 <div class="job-rewards">
                     <span class="job-money">$${difficulty.rewards.money[0]}-${difficulty.rewards.money[1]}</span>
@@ -203,43 +196,41 @@ class TruckerTabletNUI {
             `;
             
             if (isUnlocked && !isActive) {
-                jobCard.addEventListener('click', () => this.startJob(key));
-                jobCard.style.cursor = 'pointer';
-            } else {
-                jobCard.style.opacity = '0.5';
-                jobCard.style.cursor = 'not-allowed';
+                jobItem.addEventListener('click', () => this.startJob(key));
             }
             
-            jobsList.appendChild(jobCard);
+            jobsList.appendChild(jobItem);
         }
     }
     
     updateActiveJobSection() {
-        const activeJobSection = document.getElementById('activeJobSection');
-        const activeJobDetails = document.getElementById('activeJobDetails');
+        const activeJob = document.getElementById('activeJob');
+        const jobStatus = document.getElementById('jobStatus');
         
         if (this.currentJob && this.difficulties && this.difficulties[this.currentJob.difficulty]) {
             const difficulty = this.difficulties[this.currentJob.difficulty];
-            activeJobSection.style.display = 'block';
+            activeJob.style.display = 'block';
             
-            let progressText = '';
+            let statusText = '';
             if (difficulty.type === 'box') {
                 const delivered = (difficulty.boxes || 0) - (this.currentJob.remainingBoxes || 0);
                 const total = difficulty.boxes || 0;
-                progressText = `${delivered}/${total} boxes delivered`;
-            } else if (difficulty.type === 'trailer') {
-                progressText = 'Trailer delivery in progress';
+                statusText = `${delivered}/${total} boxes delivered`;
+            } else {
+                statusText = 'Trailer delivery in progress';
             }
             
-            activeJobDetails.innerHTML = `
-                <div style="font-size: 12px; color: rgba(255, 255, 255, 0.8);">
-                    <div><strong>Job:</strong> ${difficulty.label}</div>
-                    <div><strong>Status:</strong> ${progressText}</div>
-                    ${this.currentJob.destination ? `<div><strong>Destination:</strong> ${this.currentJob.destination.name}</div>` : ''}
+            jobStatus.innerHTML = `
+                <div style="font-size: 14px; margin-bottom: 8px;">
+                    <strong>${difficulty.label}</strong>
+                </div>
+                <div style="font-size: 12px; color: #92400e;">
+                    ${statusText}
+                    ${this.currentJob.destination ? `<br>Destination: ${this.currentJob.destination.name}` : ''}
                 </div>
             `;
         } else {
-            activeJobSection.style.display = 'none';
+            activeJob.style.display = 'none';
         }
     }
     
@@ -252,37 +243,37 @@ class TruckerTabletNUI {
     }
     
     rentVehicle() {
-        const currentVehicle = this.vehicles[this.currentVehicleIndex];
-        if (!currentVehicle) return;
+        const vehicle = this.vehicles[this.currentVehicleIndex];
+        if (!vehicle) return;
         
-        const rentBtn = document.getElementById('rentVehicleBtn');
-        const originalText = rentBtn.textContent;
+        const btn = document.getElementById('rentBtn');
+        const originalText = btn.textContent;
         
-        rentBtn.textContent = 'RENTING...';
-        rentBtn.style.opacity = '0.7';
+        btn.textContent = 'Renting...';
+        btn.classList.add('loading');
         
         setTimeout(() => {
-            rentBtn.textContent = originalText;
-            rentBtn.style.opacity = '1';
+            btn.textContent = originalText;
+            btn.classList.remove('loading');
         }, 1500);
         
         this.sendNUIMessage('rentVehicle', {
-            vehicleType: currentVehicle.type,
-            difficulty: currentVehicle.difficulty,
-            vehicleName: currentVehicle.name
+            vehicleType: vehicle.type,
+            difficulty: vehicle.difficulty,
+            vehicleName: vehicle.name
         });
     }
     
     show() {
         this.isVisible = true;
         document.body.style.display = 'flex';
-        document.getElementById('tablet').classList.remove('hidden');
+        document.getElementById('app').classList.remove('hidden');
     }
     
     hide() {
         this.isVisible = false;
         document.body.style.display = 'none';
-        document.getElementById('tablet').classList.add('hidden');
+        document.getElementById('app').classList.add('hidden');
     }
     
     closeNUI() {
@@ -292,121 +283,102 @@ class TruckerTabletNUI {
     
     sendNUIMessage(action, data = {}) {
         if (window.invokeNative) {
-            // In-game environment
             fetch(`https://${GetParentResourceName()}/${action}`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             }).catch(() => {
                 console.log('Failed to send NUI message:', action);
             });
         } else {
-            // Development environment
             console.log('NUI Message:', action, data);
         }
     }
 }
 
-// Initialize the NUI system
-const truckerTabletNUI = new TruckerTabletNUI();
+// Initialize
+const minimalistTruckerNUI = new MinimalistTruckerNUI();
 
 // Handle messages from Lua
 window.addEventListener('message', (event) => {
     const data = event.data;
     
-    console.log('Received message:', data); // Debug log
-    
     switch(data.action) {
         case 'openJobMenu':
-            console.log('Opening job menu'); // Debug log
-            truckerTabletNUI.playerData = data.playerStats;
-            truckerTabletNUI.difficulties = data.difficulties;
-            truckerTabletNUI.currentJob = data.currentJob;
-            truckerTabletNUI.updatePlayerInfo(data.playerStats);
-            truckerTabletNUI.updateJobsList();
-            truckerTabletNUI.updateActiveJobSection();
-            truckerTabletNUI.switchTab('jobs');
-            truckerTabletNUI.show();
+            minimalistTruckerNUI.playerData = data.playerStats;
+            minimalistTruckerNUI.difficulties = data.difficulties;
+            minimalistTruckerNUI.currentJob = data.currentJob;
+            minimalistTruckerNUI.updatePlayerInfo(data.playerStats);
+            minimalistTruckerNUI.updateJobsList();
+            minimalistTruckerNUI.updateActiveJobSection();
+            minimalistTruckerNUI.switchTab('jobs');
+            minimalistTruckerNUI.show();
             break;
             
         case 'openRentMenu':
-            console.log('Opening rent menu'); // Debug log
-            truckerTabletNUI.playerData = data.playerData;
-            truckerTabletNUI.updatePlayerInfo(data.playerData);
+            minimalistTruckerNUI.playerData = data.playerData;
+            minimalistTruckerNUI.updatePlayerInfo(data.playerData);
             if (data.vehicles) {
-                truckerTabletNUI.vehicles = data.vehicles.map(vehicle => ({
+                minimalistTruckerNUI.vehicles = data.vehicles.map(vehicle => ({
                     name: vehicle.name || vehicle.type.toUpperCase(),
                     description: vehicle.description || `${vehicle.type} for deliveries`,
-                    image: vehicle.image || `https://via.placeholder.com/300x150/1a1a1a/3b82f6?text=${vehicle.name.replace(/\s+/g, '+').toUpperCase()}`,
+                    image: vehicle.image || `https://via.placeholder.com/300x100/f8fafc/64748b?text=${vehicle.name.replace(/\s+/g, '+').toUpperCase()}`,
                     type: vehicle.type,
-                    difficulty: vehicle.difficulty,
-                    specs: {
-                        type: vehicle.difficulty === 'hard' ? 'Trailer' : vehicle.difficulty === 'medium' ? 'Box Truck' : 'Light Truck',
-                        difficulty: vehicle.difficulty.charAt(0).toUpperCase() + vehicle.difficulty.slice(1)
-                    }
+                    difficulty: vehicle.difficulty
                 }));
-                truckerTabletNUI.updateVehicleDisplay();
-                truckerTabletNUI.updateVehicleCounter();
+                minimalistTruckerNUI.updateVehicleDisplay();
             }
-            truckerTabletNUI.switchTab('rental');
-            truckerTabletNUI.show();
+            minimalistTruckerNUI.switchTab('rental');
+            minimalistTruckerNUI.show();
             break;
             
         case 'hideUI':
-            console.log('Hiding UI'); // Debug log
-            truckerTabletNUI.hide();
+            minimalistTruckerNUI.hide();
             break;
             
         case 'updatePlayerData':
-            truckerTabletNUI.updatePlayerInfo(data.playerData);
+            minimalistTruckerNUI.updatePlayerInfo(data.playerData);
             break;
     }
 });
 
 // Development testing
 if (!window.invokeNative) {
-    console.log('Running in development mode - Trucker Tablet');
+    console.log('Running in development mode - Minimalist Design');
     
-    // Test data
     setTimeout(() => {
-        truckerTabletNUI.updatePlayerInfo({
-            name: 'Test Driver',
+        minimalistTruckerNUI.updatePlayerInfo({
+            name: 'Alex',
             level: 5,
             experience: 750,
             total_deliveries: 25,
             total_earnings: 15000
         });
         
-        truckerTabletNUI.difficulties = {
+        minimalistTruckerNUI.difficulties = {
             easy: {
                 label: 'Local Deliveries',
                 requiredLevel: 1,
                 type: 'box',
-                vehicle: 'mule',
                 boxes: 6,
                 rewards: { money: [800, 1200], exp: 2 }
             },
             medium: {
-                label: 'Citywide Logistics',
+                label: 'City Logistics',
                 requiredLevel: 3,
                 type: 'box',
-                vehicle: 'benson',
                 boxes: 10,
                 rewards: { money: [1400, 2000], exp: 2 }
             },
             hard: {
-                label: 'Long-Haul Trailer',
+                label: 'Long Haul',
                 requiredLevel: 5,
                 type: 'trailer',
-                vehicle: 'phantom3',
-                trailer: 'trailers',
                 rewards: { money: [2200, 3200], exp: [3, 10] }
             }
         };
         
-        truckerTabletNUI.updateJobsList();
-        truckerTabletNUI.show();
+        minimalistTruckerNUI.updateJobsList();
+        minimalistTruckerNUI.show();
     }, 1000);
 }

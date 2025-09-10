@@ -3,133 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trucker Tablet</title>
+    <title>Trucker</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Background overlay -->
-    <div class="bg-overlay"></div>
-    
-    <!-- Tablet container -->
-    <div class="tablet" id="tablet">
-        <!-- Tablet header -->
-        <div class="tablet-header">
-            <div class="tablet-logo">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M3 17h2l.4-1.6c.2-.8.9-1.4 1.7-1.4h9.8c.8 0 1.5.6 1.7 1.4L19 17h2v2h-2.5l-.5-2H6l-.5 2H3v-2z" fill="currentColor"/>
-                    <path d="M7 19a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM17 19a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" fill="currentColor"/>
-                    <path d="M5 6V4h14v2l2 6H3l2-6z" fill="currentColor"/>
-                </svg>
-                <h1>Trucker Tablet</h1>
-            </div>
-            <button class="close-btn" id="closeBtn">×</button>
-        </div>
+    <div class="app" id="app">
+        <!-- Header -->
+        <header class="header">
+            <h1>Trucker</h1>
+            <button class="close" id="closeBtn">×</button>
+        </header>
 
-        <!-- Navigation tabs -->
-        <div class="nav-tabs">
-            <button class="nav-tab active" data-tab="jobs" id="jobsTab">Jobs</button>
-            <button class="nav-tab" data-tab="rental" id="rentalTab">Rental</button>
-        </div>
+        <!-- Navigation -->
+        <nav class="nav">
+            <button class="nav-item active" data-tab="jobs">Jobs</button>
+            <button class="nav-item" data-tab="rental">Rental</button>
+        </nav>
 
-        <!-- Content area -->
-        <div class="content">
-            <!-- Jobs tab content -->
-            <div class="tab-content active" id="jobsContent">
-                <!-- Player stats -->
-                <div class="player-stats">
-                    <div class="stats-header">
+        <!-- Content -->
+        <main class="main">
+            <!-- Jobs Tab -->
+            <section class="tab active" id="jobs">
+                <!-- Player Card -->
+                <div class="card">
+                    <div class="player">
                         <div class="player-info">
-                            <h3 id="playerName">Driver Name</h3>
-                            <span class="player-level" id="playerLevel">Level 5</span>
+                            <h2 id="playerName">Driver</h2>
+                            <span class="level" id="playerLevel">Level 1</span>
                         </div>
-                        <div class="stats-grid">
+                        <div class="stats">
                             <div class="stat">
-                                <span class="stat-value" id="totalDeliveries">0</span>
-                                <span class="stat-label">Deliveries</span>
+                                <span class="value" id="totalDeliveries">0</span>
+                                <span class="label">Jobs</span>
                             </div>
                             <div class="stat">
-                                <span class="stat-value" id="totalEarnings">$0</span>
-                                <span class="stat-label">Earned</span>
+                                <span class="value" id="totalEarnings">$0</span>
+                                <span class="label">Earned</span>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- EXP bar -->
-                    <div class="exp-section">
+                    <!-- EXP Bar -->
+                    <div class="exp">
                         <div class="exp-info">
-                            <span class="exp-label">Experience</span>
-                            <span class="exp-text" id="expText">750 / 1000 XP</span>
+                            <span>Experience</span>
+                            <span id="expText">0 / 100</span>
                         </div>
                         <div class="exp-bar">
-                            <div class="exp-fill" id="expFill" style="width: 75%;"></div>
+                            <div class="exp-fill" id="expFill"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Active job section -->
-                <div class="active-job" id="activeJobSection" style="display: none;">
+                <!-- Active Job -->
+                <div class="card active-job" id="activeJob" style="display: none;">
                     <div class="job-header">
                         <h3>Current Job</h3>
-                        <button class="cancel-job-btn" id="cancelJobBtn">Cancel</button>
+                        <button class="btn-small" id="cancelJob">Cancel</button>
                     </div>
-                    <div class="job-details" id="activeJobDetails"></div>
+                    <div class="job-status" id="jobStatus"></div>
                 </div>
 
-                <!-- Available jobs -->
-                <div class="jobs-section">
+                <!-- Available Jobs -->
+                <div class="card">
                     <h3>Available Jobs</h3>
-                    <div class="jobs-list" id="jobsList">
-                        <!-- Jobs will be populated here -->
-                    </div>
+                    <div class="jobs" id="jobsList"></div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Rental tab content -->
-            <div class="tab-content" id="rentalContent">
-                <div class="rental-section">
-                    <div class="rental-info">
-                        <h3>Vehicle Rental</h3>
-                        <p>Rent a vehicle to start working. All rentals are FREE!</p>
-                    </div>
-
-                    <!-- Vehicle carousel -->
-                    <div class="vehicle-showcase">
+            <!-- Rental Tab -->
+            <section class="tab" id="rental">
+                <div class="card">
+                    <h3>Vehicle Rental</h3>
+                    <p class="subtitle">All rentals are free</p>
+                    
+                    <!-- Vehicle Display -->
+                    <div class="vehicle">
                         <div class="vehicle-nav">
-                            <button class="nav-btn" id="prevVehicleBtn">‹</button>
-                            <div class="vehicle-counter">
-                                <span id="currentVehicle">1</span> / <span id="totalVehicles">3</span>
-                            </div>
-                            <button class="nav-btn" id="nextVehicleBtn">›</button>
+                            <button class="nav-arrow" id="prevVehicle">‹</button>
+                            <span class="counter">
+                                <span id="currentVehicle">1</span>/<span id="totalVehicles">3</span>
+                            </span>
+                            <button class="nav-arrow" id="nextVehicle">›</button>
                         </div>
-
-                        <div class="vehicle-card" id="vehicleCard">
+                        
+                        <div class="vehicle-card">
                             <div class="vehicle-image">
-                                <img id="vehicleImage" src="https://via.placeholder.com/300x150/1a1a1a/00d4ff?text=Vehicle" alt="Vehicle">
+                                <img id="vehicleImage" src="https://via.placeholder.com/300x120/f8fafc/64748b?text=Vehicle" alt="Vehicle">
                             </div>
                             <div class="vehicle-info">
-                                <h4 id="vehicleName">Phantom Truck</h4>
-                                <p id="vehicleDescription">Heavy-duty truck for deliveries</p>
-                                <div class="vehicle-specs">
-                                    <span class="spec" id="vehicleType">Trailer</span>
-                                    <span class="spec" id="vehicleDifficulty">Hard</span>
-                                    <span class="spec free">FREE</span>
+                                <h4 id="vehicleName">Phantom</h4>
+                                <p id="vehicleDesc">Heavy duty truck</p>
+                                <div class="tags">
+                                    <span class="tag" id="vehicleType">Trailer</span>
+                                    <span class="tag" id="vehicleDiff">Hard</span>
+                                    <span class="tag free">Free</span>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Action buttons -->
-                        <div class="rental-actions">
-                            <button class="btn btn-primary" id="rentVehicleBtn">
-                                Rent Vehicle - FREE
-                            </button>
-                        </div>
+                        
+                        <button class="btn-primary" id="rentBtn">Rent Vehicle</button>
                     </div>
                 </div>
-            </div>
-        </div>
+            </section>
+        </main>
     </div>
 
     <script src="script.js"></script>
