@@ -75,23 +75,23 @@ class MinimalistTruckerNUI {
     setupDefaultVehicles() {
         this.vehicles = [
             {
-                name: 'Phantom',
-                description: 'Heavy duty truck',
-                image: 'https://via.placeholder.com/300x100/f8fafc/64748b?text=PHANTOM',
+                name: 'Phantom Truck',
+                description: 'Professional heavy-duty truck designed for long-haul deliveries and heavy cargo transport',
+                image: 'images/phantom.png',
                 type: 'phantom3',
                 difficulty: 'hard'
             },
             {
-                name: 'Benson',
-                description: 'Medium truck',
-                image: 'https://via.placeholder.com/300x100/f8fafc/64748b?text=BENSON',
+                name: 'Benson Truck',
+                description: 'Versatile medium-capacity truck perfect for citywide logistics and regional delivery operations',
+                image: 'images/benson.png',
                 type: 'benson',
                 difficulty: 'medium'
             },
             {
-                name: 'Mule',
-                description: 'Light truck',
-                image: 'https://via.placeholder.com/300x100/f8fafc/64748b?text=MULE',
+                name: 'Mule Truck',
+                description: 'Compact and efficient delivery truck ideal for local routes and quick urban deliveries',
+                image: 'images/mule.png',
                 type: 'mule',
                 difficulty: 'easy'
             }
@@ -322,7 +322,7 @@ window.addEventListener('message', (event) => {
                 minimalistTruckerNUI.vehicles = data.vehicles.map(vehicle => ({
                     name: vehicle.name || vehicle.type.toUpperCase(),
                     description: vehicle.description || `${vehicle.type} for deliveries`,
-                    image: vehicle.image || `https://via.placeholder.com/300x100/f8fafc/64748b?text=${vehicle.name.replace(/\s+/g, '+').toUpperCase()}`,
+                    image: vehicle.image || `images/${vehicle.type.toLowerCase()}.png`,
                     type: vehicle.type,
                     difficulty: vehicle.difficulty
                 }));

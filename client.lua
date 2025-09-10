@@ -305,11 +305,11 @@ CreateThread(function()
                 local vehicleData = {}
                 for key, difficulty in pairs(serverData.difficulties) do
                     table.insert(vehicleData, {
-                        name = difficulty.vehicle:upper(),
+                        name = difficulty.vehicle:upper() .. ' TRUCK',
                         description = difficulty.label,
                         type = difficulty.vehicle,
                         difficulty = key,
-                        image = string.format('https://via.placeholder.com/300x150/1a1a1a/3b82f6?text=%s', difficulty.vehicle:upper():gsub(' ', '+'))
+                        image = string.format('images/%s.png', difficulty.vehicle:lower())
                     })
                 end
                 
