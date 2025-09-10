@@ -112,13 +112,27 @@ class MinimalistTruckerNUI {
     
     updateVehicleDisplay() {
         const vehicle = this.vehicles[this.currentVehicleIndex];
-        if (!vehicle) return;
+        if (!vehicle) {
+            console.log('No vehicle to display at index:', this.currentVehicleIndex);
+            return;
+        }
         
-        document.getElementById('vehicleImage').src = vehicle.image;
-        document.getElementById('vehicleName').textContent = vehicle.name;
-        document.getElementById('vehicleDesc').textContent = vehicle.description;
-        document.getElementById('vehicleType').textContent = this.getTypeDisplay(vehicle.difficulty);
-        document.getElementById('vehicleDiff').textContent = this.getDifficultyDisplay(vehicle.difficulty);
+        console.log('Updating vehicle display with:', vehicle); // Debug
+        
+        const imageElement = document.getElementById('vehicleImage');
+        const nameElement = document.getElementById('vehicleName');
+        const descElement = document.getElementById('vehicleDesc');
+        const typeElement = document.getElementById('vehicleType');
+        const diffElement = document.getElementById('vehicleDiff');
+        
+        if (imageElement) {
+            imageElement.src = vehicle.image;
+            console.log('Set image src to:', vehicle.image); // Debug
+        }
+        if (nameElement) nameElement.textContent = vehicle.name;
+        if (descElement) descElement.textContent = vehicle.description;
+        if (typeElement) typeElement.textContent = this.getTypeDisplay(vehicle.difficulty);
+        if (diffElement) diffElement.textContent = this.getDifficultyDisplay(vehicle.difficulty);
         
         // Update counter
         document.getElementById('currentVehicle').textContent = this.currentVehicleIndex + 1;
@@ -316,17 +330,26 @@ window.addEventListener('message', (event) => {
             break;
             
         case 'openRentMenu':
+            console.log('Opening rent menu with data:', data); // Debug
             minimalistTruckerNUI.playerData = data.playerData;
             minimalistTruckerNUI.updatePlayerInfo(data.playerData);
             if (data.vehicles) {
-                minimalistTruckerNUI.vehicles = data.vehicles.map(vehicle => ({
-                    name: vehicle.name || vehicle.type.toUpperCase(),
-                    description: vehicle.description || `${vehicle.type} for deliveries`,
-                    image: vehicle.image || `images/${vehicle.type.toLowerCase()}.png`,
-                    type: vehicle.type,
-                    difficulty: vehicle.difficulty
-                }));
+                console.log('Processing vehicles:', data.vehicles); // Debug
+                minimalistTruckerNUI.vehicles = data.vehicles.map(vehicle => {
+                    const mappedVehicle = {
+                        name: vehicle.name || (vehicle.type.toUpperCase() + ' TRUCK'),
+                        description: vehicle.description || `Professional ${vehicle.type} for delivery operations`,
+                        image: vehicle.image || `images/${vehicle.type.toLowerCase()}.png`,
+                        type: vehicle.type,
+                        difficulty: vehicle.difficulty
+                    };
+                    console.log('Mapped vehicle:', mappedVehicle); // Debug
+                    return mappedVehicle;
+                });
                 minimalistTruckerNUI.updateVehicleDisplay();
+            } else {
+                console.log('No vehicles data, using defaults'); // Debug
+                minimalistTruckerNUI.setupDefaultVehicles();
             }
             minimalistTruckerNUI.switchTab('rental');
             minimalistTruckerNUI.show();

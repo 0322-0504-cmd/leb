@@ -313,7 +313,7 @@ CreateThread(function()
                     })
                 end
                 
-                print('Sending openRentMenu message') -- Debug
+                print('Sending openRentMenu message with vehicles:', json.encode(vehicleData)) -- Debug
                 SendNUIMessage({
                     action = 'openRentMenu',
                     playerData = serverData.playerStats,
