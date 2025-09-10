@@ -476,10 +476,14 @@ body {
 }
 
 .vehicle-image {
-    height: 200px;
+    height: 250px;
     overflow: hidden;
     background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
 }
 
 .vehicle-image::after {
@@ -488,15 +492,19 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 50%;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.1));
+    height: 30%;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.05));
 }
 
 .vehicle-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
     transition: transform 0.3s ease;
+    z-index: 1;
+    position: relative;
 }
 
 .vehicle-card:hover .vehicle-image img {
