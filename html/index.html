@@ -7,78 +7,172 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Background overlay -->
-    <div id="background-overlay"></div>
+    <!-- Animated background -->
+    <div class="bg-overlay">
+        <div class="bg-grid"></div>
+        <div class="bg-particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+    </div>
     
-    <!-- Main rental panel -->
-    <div id="rental-panel" class="rental-panel">
-        <!-- Header with glowing title -->
-        <div class="panel-header">
-            <h1 class="panel-title">Vehicle Rental</h1>
-        </div>
-
-        <!-- Player Info Section -->
-        <div class="player-info-section">
-            <div class="player-details">
-                <div class="player-name" id="playerName">Driver Name</div>
-                <div class="player-level" id="playerLevel">Level 5</div>
-            </div>
-            
-            <!-- EXP Bar -->
-            <div class="exp-container">
-                <div class="exp-label">Experience</div>
-                <div class="exp-bar">
-                    <div class="exp-fill" id="expFill"></div>
-                    <div class="exp-glow"></div>
+    <!-- Main container -->
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-glow"></div>
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                        <path d="M3 17h2l.4-1.6c.2-.8.9-1.4 1.7-1.4h9.8c.8 0 1.5.6 1.7 1.4L19 17h2v2h-2.5l-.5-2H6l-.5 2H3v-2z" fill="currentColor"/>
+                        <path d="M7 19a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM17 19a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" fill="currentColor"/>
+                        <path d="M5 6V4h14v2l2 6H3l2-6z" fill="currentColor"/>
+                    </svg>
                 </div>
-                <div class="exp-text" id="expText">750 / 1000 EXP</div>
+                <div class="logo-text">
+                    <h1>VEHICLE RENTAL</h1>
+                    <span>Premium Fleet Service</span>
+                </div>
             </div>
-        </div>
-
-        <!-- Vehicle Image Carousel -->
-        <div class="vehicle-carousel">
-            <button class="carousel-btn prev-btn" id="prevBtn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <button class="close-btn" id="closeBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
             </button>
-            
-            <div class="vehicle-display">
-                <div class="vehicle-image" id="vehicleImage">
-                    <img src="https://via.placeholder.com/300x180/1a1a1a/00ffff?text=Vehicle+Image" alt="Vehicle" id="currentVehicleImg">
+        </div>
+
+        <!-- Player stats card -->
+        <div class="stats-card">
+            <div class="stats-header">
+                <div class="player-info">
+                    <div class="player-avatar">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/>
+                            <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div class="player-details">
+                        <h3 id="playerName">Driver Name</h3>
+                        <div class="player-level" id="playerLevel">Level 5</div>
+                    </div>
                 </div>
-                <div class="vehicle-info">
-                    <h3 class="vehicle-name" id="vehicleName">Phantom Truck</h3>
-                    <p class="vehicle-description" id="vehicleDescription">Heavy-duty truck for long haul deliveries</p>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-value" id="totalDeliveries">0</span>
+                        <span class="stat-label">Deliveries</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="totalEarnings">$0</span>
+                        <span class="stat-label">Earned</span>
+                    </div>
                 </div>
             </div>
             
-            <button class="carousel-btn next-btn" id="nextBtn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
-            
-            <!-- Dot indicators -->
-            <div class="carousel-dots" id="carouselDots">
-                <span class="dot active"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
+            <!-- Enhanced EXP bar -->
+            <div class="exp-section">
+                <div class="exp-header">
+                    <span class="exp-label">Experience Progress</span>
+                    <span class="exp-text" id="expText">750 / 1000 XP</span>
+                </div>
+                <div class="exp-bar-container">
+                    <div class="exp-bar">
+                        <div class="exp-fill" id="expFill"></div>
+                        <div class="exp-shine"></div>
+                    </div>
+                    <div class="exp-particles">
+                        <div class="exp-particle"></div>
+                        <div class="exp-particle"></div>
+                        <div class="exp-particle"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-            <button class="rent-btn" id="rentBtn">
-                <span class="btn-text">Rent Vehicle - FREE</span>
-                <div class="btn-glow"></div>
-            </button>
-            <button class="cancel-btn" id="cancelBtn">
+        <!-- Vehicle showcase -->
+        <div class="vehicle-showcase">
+            <div class="showcase-header">
+                <h2>Select Your Vehicle</h2>
+                <div class="vehicle-counter">
+                    <span id="currentIndex">1</span> / <span id="totalVehicles">3</span>
+                </div>
+            </div>
+            
+            <div class="vehicle-carousel">
+                <button class="nav-btn prev-btn" id="prevBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                
+                <div class="vehicle-card" id="vehicleCard">
+                    <div class="vehicle-image-container">
+                        <div class="vehicle-glow"></div>
+                        <img id="vehicleImage" src="https://via.placeholder.com/400x200/0a0a0a/00d4ff?text=PHANTOM+TRUCK" alt="Vehicle">
+                        <div class="vehicle-badge" id="vehicleBadge">HEAVY DUTY</div>
+                    </div>
+                    
+                    <div class="vehicle-info">
+                        <h3 id="vehicleName">Phantom Truck</h3>
+                        <p id="vehicleDescription">Professional heavy-duty truck for long-haul deliveries and cargo transport</p>
+                        
+                        <div class="vehicle-specs">
+                            <div class="spec-item">
+                                <span class="spec-icon">⚡</span>
+                                <span class="spec-text" id="vehicleType">Trailer</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-icon">🎯</span>
+                                <span class="spec-text" id="vehicleDifficulty">Hard</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-icon">💰</span>
+                                <span class="spec-text">FREE RENTAL</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="nav-btn next-btn" id="nextBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Dots indicator -->
+            <div class="dots-container" id="dotsContainer">
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="actions">
+            <button class="btn btn-secondary" id="cancelBtn">
+                <span class="btn-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </span>
                 <span class="btn-text">Cancel</span>
-                <div class="btn-glow"></div>
+                <div class="btn-ripple"></div>
+            </button>
+            
+            <button class="btn btn-primary" id="rentBtn">
+                <span class="btn-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <span class="btn-text">Rent Vehicle - FREE</span>
+                <div class="btn-ripple"></div>
             </button>
         </div>
     </div>
