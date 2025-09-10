@@ -200,18 +200,50 @@ lib.callback.register('qbx_truckerjob:startJob', function(src, difficultyKey)
         return { success = false, message = 'You already have an active job' }
     end
 
-    -- pick a destination server-side
-    local destinations = Config.DeliveryLocations[difficultyKey] or {}
-    local destination = destinations[math.random(1, #destinations)]
     local job = {
         id = ('job-%s-%d'):format(difficultyKey, os.time()),
         difficulty = difficultyKey,
         vehicle = difficulty.vehicle,
         trailer = difficulty.trailer,
         deposit = 0, -- No deposit required - free rental
-        destination = destination,
-        remainingBoxes = (difficulty.type == 'box' and tonumber(difficulty.boxes)) or 0
+        remainingBoxes = (difficulty.type == 'box' and tonumber(difficulty.boxes)) or 0,
+        currentDeliveryIndex = 1,
+        deliveryLocations = {},
+        destination = nil
     }
+
+    -- For box jobs, create multiple delivery locations (one per box)
+    if difficulty.type == 'box' then
+        local allLocations = Config.DeliveryLocations[difficultyKey] or {}
+        local numBoxes = difficulty.boxes or 1
+        
+        -- Shuffle and select locations for each box
+        local shuffledLocations = {}
+        for i, location in ipairs(allLocations) do
+            table.insert(shuffledLocations, location)
+        end
+        
+        -- Shuffle the locations
+        for i = #shuffledLocations, 2, -1 do
+            local j = math.random(i)
+            shuffledLocations[i], shuffledLocations[j] = shuffledLocations[j], shuffledLocations[i]
+        end
+        
+        -- Assign locations for each box (cycle through if needed)
+        for i = 1, numBoxes do
+            local locationIndex = ((i - 1) % #shuffledLocations) + 1
+            table.insert(job.deliveryLocations, shuffledLocations[locationIndex])
+        end
+        
+        -- Set first destination
+        job.destination = job.deliveryLocations[1]
+        print('Created multi-location job with', #job.deliveryLocations, 'locations')
+    else
+        -- For trailer jobs, use single destination
+        local destinations = Config.DeliveryLocations[difficultyKey] or {}
+        job.destination = destinations[math.random(1, #destinations)]
+    end
+
     playerJobs[identifier].active = job
     return { success = true, job = job }
 end)
@@ -247,6 +279,37 @@ lib.callback.register('qbx_truckerjob:rentVehicle', function(src, vehicleType, d
 
     -- spawn handled client-side or by separate spawn system; return success with no cost
     return { success = true, rentPrice = 0 }
+end)
+
+-- Move to next delivery location (for multi-box jobs)
+lib.callback.register('qbx_truckerjob:nextDelivery', function(src)
+    local identifier = getIdentifier(src)
+    local state = playerJobs[identifier]
+    if not state or not state.active then return nil end
+    
+    local job = state.active
+    if not job.deliveryLocations or #job.deliveryLocations == 0 then return nil end
+    
+    -- Move to next location
+    job.currentDeliveryIndex = (job.currentDeliveryIndex or 1) + 1
+    
+    if job.currentDeliveryIndex <= #job.deliveryLocations then
+        -- Set next destination
+        job.destination = job.deliveryLocations[job.currentDeliveryIndex]
+        job.remainingBoxes = (job.remainingBoxes or 1) - 1
+        
+        print('Moving to next delivery:', job.currentDeliveryIndex, 'of', #job.deliveryLocations)
+        return { 
+            success = true, 
+            destination = job.destination,
+            remaining = job.remainingBoxes,
+            current = job.currentDeliveryIndex,
+            total = #job.deliveryLocations
+        }
+    else
+        -- All deliveries completed
+        return { success = true, completed = true }
+    end
 end)
 
 -- Inventory helpers

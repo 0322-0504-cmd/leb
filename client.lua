@@ -138,12 +138,51 @@ local function spawnDeliveryNPC(target)
                         stopDeliveryAnim()
                         return
                     end
-                    activeJob.remainingBoxes = (activeJob.remainingBoxes or 1) - 1
-                    if activeJob.remainingBoxes > 0 then
-                        QBCore.Functions.Notify(('Delivered 1 box. %s remaining.'):format(activeJob.remainingBoxes), 'success')
-                        stopDeliveryAnim()
-                        return
+                    
+                    -- Move to next delivery location
+                    local nextDelivery = lib.callback.await('qbx_truckerjob:nextDelivery', false)
+                    if nextDelivery and nextDelivery.success then
+                        if nextDelivery.completed then
+                            -- All boxes delivered - complete job
+                            QBCore.Functions.Notify('All boxes delivered! Job completed.', 'success')
+                            TriggerServerEvent('qbx_truckerjob:completeJob', 0.0)
+                            if deliveryBlip then RemoveBlip(deliveryBlip) deliveryBlip = nil end
+                            if deliveryPed and DoesEntityExist(deliveryPed) then DeleteEntity(deliveryPed) deliveryPed = nil end
+                            activeJob = nil
+                        else
+                            -- Move to next location
+                            local remaining = nextDelivery.remaining or 0
+                            local current = nextDelivery.current or 1
+                            local total = nextDelivery.total or 1
+                            
+                            QBCore.Functions.Notify(('Box delivered! Moving to location %s/%s'):format(current, total), 'success')
+                            
+                            -- Update destination
+                            activeJob.destination = nextDelivery.destination
+                            activeJob.remainingBoxes = remaining
+                            
+                            -- Remove old blip and NPC
+                            if deliveryBlip then RemoveBlip(deliveryBlip) end
+                            if deliveryPed and DoesEntityExist(deliveryPed) then DeleteEntity(deliveryPed) end
+                            
+                            -- Create new blip for next location
+                            local newDest = nextDelivery.destination
+                            deliveryBlip = AddBlipForCoord(newDest.coords.x, newDest.coords.y, newDest.coords.z)
+                            SetBlipRoute(deliveryBlip, true)
+                            SetBlipSprite(deliveryBlip, 1)
+                            SetBlipColour(deliveryBlip, 5)
+                            BeginTextCommandSetBlipName("STRING")
+                            AddTextComponentString("Next Delivery")
+                            EndTextCommandSetBlipName(deliveryBlip)
+                            
+                            -- Spawn new NPC at next location
+                            spawnDeliveryNPC(newDest)
+                            
+                            QBCore.Functions.Notify(('Next delivery: %s'):format(newDest.name), 'primary')
+                        end
                     end
+                    stopDeliveryAnim()
+                    return
                 else
                     startDeliveryAnim(deliveryPed)
                     if lib and lib.progressBar then

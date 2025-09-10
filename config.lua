@@ -92,13 +92,24 @@ Config = {
     },
     DeliveryLocations = {
         easy = {
-            { name = 'LS Docks', coords = vec4(1200.45, -3250.25, 6.0, 90.0) },
-            { name = 'Vinewood Bowl', coords = vec4(688.6, 572.6, 130.5, 340.0) },
-            { name = 'La Mesa', coords = vec4(842.8, -236.3, 72.0, 270.0) }
+            { name = 'Downtown Store', coords = vec4(25.7, -1347.3, 29.5, 270.0) },
+            { name = 'Vinewood Market', coords = vec4(373.9, 326.9, 103.6, 165.0) },
+            { name = 'Mirror Park Shop', coords = vec4(1163.4, -323.8, 69.2, 100.0) },
+            { name = 'Davis Store', coords = vec4(-47.5, -1757.5, 29.4, 50.0) },
+            { name = 'Little Seoul Market', coords = vec4(-707.5, -914.3, 19.2, 90.0) },
+            { name = 'Strawberry Store', coords = vec4(24.5, -1346.2, 29.5, 270.0) }
         },
         medium = {
-            { name = 'Sandy Shores Airfield', coords = vec4(1735.5, 3296.8, 41.1, 105.0) },
-            { name = 'Grapeseed Depot', coords = vec4(1691.0, 4785.8, 41.9, 190.0) }
+            { name = 'Airport Cargo', coords = vec4(-1336.1, -3044.4, 13.9, 330.0) },
+            { name = 'Port Warehouse', coords = vec4(1215.9, -3214.5, 5.9, 90.0) },
+            { name = 'Industrial District', coords = vec4(716.9, -962.1, 30.4, 180.0) },
+            { name = 'La Mesa Depot', coords = vec4(842.8, -236.3, 72.0, 270.0) },
+            { name = 'Textile City Hub', coords = vec4(717.4, -962.8, 30.4, 180.0) },
+            { name = 'El Burro Heights', coords = vec4(1392.6, -2089.7, 52.0, 315.0) },
+            { name = 'Cypress Flats', coords = vec4(819.2, -2154.1, 29.6, 0.0) },
+            { name = 'Murrieta Heights', coords = vec4(1207.9, -1402.4, 35.2, 90.0) },
+            { name = 'East Vinewood', coords = vec4(1135.5, -982.1, 46.4, 280.0) },
+            { name = 'Mirror Park Depot', coords = vec4(1163.4, -323.8, 69.2, 100.0) }
         },
         hard = {
             { name = 'Paleto Bay Factory', coords = vec4(-103.7, 6278.8, 31.4, 135.0) },
