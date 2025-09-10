@@ -301,7 +301,7 @@ CreateThread(function()
                 nuiOpen = true
                 local serverData = lib.callback.await('qbx_truckerjob:getMenuData', false)
                 
-                -- Convert difficulties to vehicle data for the new NUI
+                -- Convert difficulties to vehicle data for the rental NUI
                 local vehicleData = {}
                 for key, difficulty in pairs(serverData.difficulties) do
                     table.insert(vehicleData, {
@@ -309,10 +309,11 @@ CreateThread(function()
                         description = difficulty.label,
                         type = difficulty.vehicle,
                         difficulty = key,
-                        image = string.format('https://via.placeholder.com/300x120/1a1a1a/00ffff?text=%s', difficulty.vehicle:upper():gsub(' ', '+'))
+                        image = string.format('https://via.placeholder.com/300x150/1a1a1a/3b82f6?text=%s', difficulty.vehicle:upper():gsub(' ', '+'))
                     })
                 end
                 
+                print('Sending openRentMenu message') -- Debug
                 SendNUIMessage({
                     action = 'openRentMenu',
                     playerData = serverData.playerStats,
@@ -414,6 +415,7 @@ function OpenTruckerMenu()
         QBCore.Functions.Notify('Loaded fallback stats. DB may be initializing.', 'primary')
     end
 
+    print('Sending openJobMenu message') -- Debug
     SendNUIMessage({
         action = 'openJobMenu',
         playerStats = serverData.playerStats,

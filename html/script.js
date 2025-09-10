@@ -1,9 +1,12 @@
-// Modern Vehicle Rental NUI System - Beautiful 2025 Design
-class VehicleRentalNUI {
+// Trucker Tablet NUI - Clean and Simple
+class TruckerTabletNUI {
     constructor() {
+        this.currentTab = 'jobs';
         this.currentVehicleIndex = 0;
         this.vehicles = [];
         this.playerData = null;
+        this.difficulties = null;
+        this.currentJob = null;
         this.isVisible = false;
         
         this.init();
@@ -11,376 +14,258 @@ class VehicleRentalNUI {
     
     init() {
         this.bindEvents();
-        this.setupCarousel();
-        this.createRippleEffect();
+        this.setupDefaultVehicles();
         this.hide(); // Start hidden
     }
     
     bindEvents() {
-        // Navigation buttons
-        document.getElementById('prevBtn').addEventListener('click', () => this.previousVehicle());
-        document.getElementById('nextBtn').addEventListener('click', () => this.nextVehicle());
-        
-        // Action buttons
-        document.getElementById('rentBtn').addEventListener('click', (e) => {
-            this.createRipple(e, e.currentTarget);
-            setTimeout(() => this.rentVehicle(), 200);
+        // Tab switching
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                this.switchTab(e.target.dataset.tab);
+            });
         });
         
-        document.getElementById('cancelBtn').addEventListener('click', (e) => {
-            this.createRipple(e, e.currentTarget);
-            setTimeout(() => this.closeNUI(), 200);
+        // Close button
+        document.getElementById('closeBtn').addEventListener('click', () => {
+            this.closeNUI();
         });
         
-        document.getElementById('closeBtn').addEventListener('click', () => this.closeNUI());
+        // Vehicle navigation
+        document.getElementById('prevVehicleBtn').addEventListener('click', () => {
+            this.previousVehicle();
+        });
+        
+        document.getElementById('nextVehicleBtn').addEventListener('click', () => {
+            this.nextVehicle();
+        });
+        
+        // Rent vehicle button
+        document.getElementById('rentVehicleBtn').addEventListener('click', () => {
+            this.rentVehicle();
+        });
+        
+        // Cancel job button
+        document.getElementById('cancelJobBtn').addEventListener('click', () => {
+            this.cancelJob();
+        });
         
         // Keyboard events
         document.addEventListener('keydown', (e) => {
             if (!this.isVisible) return;
             
-            switch(e.key) {
-                case 'Escape':
-                    this.closeNUI();
-                    break;
-                case 'ArrowLeft':
-                    this.previousVehicle();
-                    break;
-                case 'ArrowRight':
-                    this.nextVehicle();
-                    break;
-                case 'Enter':
-                    this.rentVehicle();
-                    break;
+            if (e.key === 'Escape') {
+                this.closeNUI();
             }
         });
-        
-        // Dot navigation
-        this.setupDotNavigation();
     }
     
-    createRippleEffect() {
-        // Add ripple effect to all buttons
-        document.querySelectorAll('.btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                this.createRipple(e, button);
-            });
+    switchTab(tabName) {
+        // Update tab buttons
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.classList.remove('active');
         });
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        
+        // Update tab content
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.getElementById(`${tabName}Content`).classList.add('active');
+        
+        this.currentTab = tabName;
     }
     
-    createRipple(event, element) {
-        const ripple = element.querySelector('.btn-ripple');
-        const rect = element.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        const x = event.clientX - rect.left - size / 2;
-        const y = event.clientY - rect.top - size / 2;
-        
-        ripple.style.width = ripple.style.height = size + 'px';
-        ripple.style.left = x + 'px';
-        ripple.style.top = y + 'px';
-        ripple.style.transform = 'scale(0)';
-        
-        // Trigger animation
-        setTimeout(() => {
-            ripple.style.transform = 'scale(4)';
-            ripple.style.opacity = '0';
-        }, 10);
-        
-        setTimeout(() => {
-            ripple.style.transform = 'scale(0)';
-            ripple.style.opacity = '0.3';
-        }, 600);
-    }
-    
-    setupCarousel() {
-        // Enhanced vehicle data with better descriptions and specs
+    setupDefaultVehicles() {
         this.vehicles = [
             {
                 name: 'Phantom Truck',
-                description: 'Professional heavy-duty truck designed for long-haul deliveries and heavy cargo transport across the state.',
-                image: 'https://via.placeholder.com/400x200/0a0a0a/00d4ff?text=PHANTOM+TRUCK',
+                description: 'Heavy-duty truck for trailer deliveries',
+                image: 'https://via.placeholder.com/300x150/1a1a1a/3b82f6?text=PHANTOM+TRUCK',
                 type: 'phantom3',
                 difficulty: 'hard',
-                badge: 'HEAVY DUTY',
                 specs: {
                     type: 'Trailer',
-                    difficulty: 'Hard',
-                    price: 'FREE'
+                    difficulty: 'Hard'
                 }
             },
             {
                 name: 'Benson Truck',
-                description: 'Versatile medium-capacity truck perfect for citywide logistics and regional delivery operations.',
-                image: 'https://via.placeholder.com/400x200/0a0a0a/00ff87?text=BENSON+TRUCK',
+                description: 'Medium truck for box deliveries',
+                image: 'https://via.placeholder.com/300x150/1a1a1a/22c55e?text=BENSON+TRUCK',
                 type: 'benson',
                 difficulty: 'medium',
-                badge: 'VERSATILE',
                 specs: {
                     type: 'Box Truck',
-                    difficulty: 'Medium',
-                    price: 'FREE'
+                    difficulty: 'Medium'
                 }
             },
             {
                 name: 'Mule Truck',
-                description: 'Compact and efficient delivery truck ideal for local routes and quick urban deliveries.',
-                image: 'https://via.placeholder.com/400x200/0a0a0a/ff0096?text=MULE+TRUCK',
+                description: 'Light truck for local deliveries',
+                image: 'https://via.placeholder.com/300x150/1a1a1a/f59e0b?text=MULE+TRUCK',
                 type: 'mule',
                 difficulty: 'easy',
-                badge: 'EFFICIENT',
                 specs: {
                     type: 'Light Truck',
-                    difficulty: 'Easy',
-                    price: 'FREE'
+                    difficulty: 'Easy'
                 }
             }
         ];
         
-        this.updateCarousel();
-        this.updateCounter();
-    }
-    
-    setupDotNavigation() {
-        const dotsContainer = document.getElementById('dotsContainer');
-        
-        // Update dots when vehicles change
-        this.updateDots();
-        
-        // Add click handlers to dots
-        dotsContainer.addEventListener('click', (e) => {
-            if (e.target.classList.contains('dot')) {
-                const index = Array.from(dotsContainer.children).indexOf(e.target);
-                this.goToVehicle(index);
-            }
-        });
-    }
-    
-    updateDots() {
-        const dotsContainer = document.getElementById('dotsContainer');
-        dotsContainer.innerHTML = '';
-        
-        this.vehicles.forEach((_, index) => {
-            const dot = document.createElement('div');
-            dot.className = `dot ${index === this.currentVehicleIndex ? 'active' : ''}`;
-            dotsContainer.appendChild(dot);
-        });
-    }
-    
-    updateCounter() {
-        document.getElementById('currentIndex').textContent = this.currentVehicleIndex + 1;
-        document.getElementById('totalVehicles').textContent = this.vehicles.length;
+        this.updateVehicleDisplay();
+        this.updateVehicleCounter();
     }
     
     previousVehicle() {
         this.currentVehicleIndex = (this.currentVehicleIndex - 1 + this.vehicles.length) % this.vehicles.length;
-        this.updateCarousel();
-        this.animateCarousel('prev');
-        this.updateCounter();
+        this.updateVehicleDisplay();
+        this.updateVehicleCounter();
     }
     
     nextVehicle() {
         this.currentVehicleIndex = (this.currentVehicleIndex + 1) % this.vehicles.length;
-        this.updateCarousel();
-        this.animateCarousel('next');
-        this.updateCounter();
+        this.updateVehicleDisplay();
+        this.updateVehicleCounter();
     }
     
-    goToVehicle(index) {
-        if (index >= 0 && index < this.vehicles.length && index !== this.currentVehicleIndex) {
-            this.currentVehicleIndex = index;
-            this.updateCarousel();
-            this.animateCarousel('direct');
-            this.updateCounter();
-        }
-    }
-    
-    updateCarousel() {
+    updateVehicleDisplay() {
         const vehicle = this.vehicles[this.currentVehicleIndex];
         if (!vehicle) return;
         
-        // Update vehicle display with enhanced information
         document.getElementById('vehicleImage').src = vehicle.image;
         document.getElementById('vehicleName').textContent = vehicle.name;
         document.getElementById('vehicleDescription').textContent = vehicle.description;
-        document.getElementById('vehicleBadge').textContent = vehicle.badge;
         document.getElementById('vehicleType').textContent = vehicle.specs.type;
         document.getElementById('vehicleDifficulty').textContent = vehicle.specs.difficulty;
-        
-        // Update dots
-        document.querySelectorAll('.dot').forEach((dot, index) => {
-            dot.classList.toggle('active', index === this.currentVehicleIndex);
-        });
-        
-        // Add loading effect
-        const vehicleCard = document.getElementById('vehicleCard');
-        vehicleCard.classList.add('loading');
-        
-        setTimeout(() => {
-            vehicleCard.classList.remove('loading');
-        }, 300);
     }
     
-    animateCarousel(direction) {
-        const vehicleCard = document.getElementById('vehicleCard');
-        const image = document.getElementById('vehicleImage');
-        
-        // Enhanced animation based on direction
-        let translateX = '0px';
-        let scale = '1';
-        
-        switch(direction) {
-            case 'prev':
-                translateX = '-20px';
-                scale = '0.95';
-                break;
-            case 'next':
-                translateX = '20px';
-                scale = '0.95';
-                break;
-            case 'direct':
-                scale = '0.9';
-                break;
-        }
-        
-        // Apply animation
-        vehicleCard.style.transform = `translateX(${translateX}) scale(${scale})`;
-        vehicleCard.style.opacity = '0.7';
-        image.style.transform = 'scale(1.1)';
-        
-        // Reset animation
-        setTimeout(() => {
-            vehicleCard.style.transform = 'translateX(0) scale(1)';
-            vehicleCard.style.opacity = '1';
-            image.style.transform = 'scale(1)';
-        }, 200);
-        
-        // Add glow effect
-        this.addGlowEffect();
-    }
-    
-    addGlowEffect() {
-        const vehicleCard = document.getElementById('vehicleCard');
-        const glow = vehicleCard.querySelector('.vehicle-glow');
-        
-        glow.style.opacity = '1';
-        setTimeout(() => {
-            glow.style.opacity = '0';
-        }, 500);
+    updateVehicleCounter() {
+        document.getElementById('currentVehicle').textContent = this.currentVehicleIndex + 1;
+        document.getElementById('totalVehicles').textContent = this.vehicles.length;
     }
     
     updatePlayerInfo(playerData) {
         this.playerData = playerData;
         
         if (playerData) {
-            // Update player information
             document.getElementById('playerName').textContent = playerData.name || 'Driver';
             document.getElementById('playerLevel').textContent = `Level ${playerData.level || 1}`;
-            
-            // Update statistics
             document.getElementById('totalDeliveries').textContent = (playerData.total_deliveries || 0).toLocaleString();
             document.getElementById('totalEarnings').textContent = `$${(playerData.total_earnings || 0).toLocaleString()}`;
             
-            // Update EXP bar with animation
+            // Update EXP bar
             const currentExp = playerData.experience || 0;
             const requiredExp = (playerData.level || 1) * 100;
             const expProgress = Math.min(currentExp, requiredExp);
             const expPercentage = (expProgress / requiredExp) * 100;
             
-            const expFill = document.getElementById('expFill');
-            const expText = document.getElementById('expText');
-            
-            // Animate EXP bar
-            setTimeout(() => {
-                expFill.style.width = `${expPercentage}%`;
-                expText.textContent = `${expProgress} / ${requiredExp} XP`;
-            }, 500);
-            
-            // Trigger EXP particles animation
-            this.animateExpParticles();
+            document.getElementById('expFill').style.width = `${expPercentage}%`;
+            document.getElementById('expText').textContent = `${expProgress} / ${requiredExp} XP`;
         }
     }
     
-    animateExpParticles() {
-        const particles = document.querySelectorAll('.exp-particle');
-        particles.forEach((particle, index) => {
-            setTimeout(() => {
-                particle.style.animation = 'none';
-                particle.offsetHeight; // Trigger reflow
-                particle.style.animation = 'expFloat 3s ease-in-out infinite';
-            }, index * 200);
-        });
-    }
-    
-    updateVehicles(vehicleData) {
-        if (vehicleData && Array.isArray(vehicleData)) {
-            // Map server data to enhanced vehicle objects
-            this.vehicles = vehicleData.map(vehicle => ({
-                name: vehicle.name || vehicle.type.toUpperCase(),
-                description: vehicle.description || `Professional ${vehicle.type} for delivery operations`,
-                image: vehicle.image || `https://via.placeholder.com/400x200/0a0a0a/00d4ff?text=${vehicle.name.replace(/\s+/g, '+').toUpperCase()}`,
-                type: vehicle.type,
-                difficulty: vehicle.difficulty,
-                badge: this.getDifficultyBadge(vehicle.difficulty),
-                specs: {
-                    type: this.getVehicleTypeDisplay(vehicle.difficulty),
-                    difficulty: this.getDifficultyDisplay(vehicle.difficulty),
-                    price: 'FREE'
+    updateJobsList() {
+        const jobsList = document.getElementById('jobsList');
+        if (!this.difficulties) return;
+        
+        jobsList.innerHTML = '';
+        
+        for (const [key, difficulty] of Object.entries(this.difficulties)) {
+            const isUnlocked = !this.playerData || this.playerData.level >= difficulty.requiredLevel;
+            const isActive = this.currentJob && this.currentJob.difficulty === key;
+            
+            const jobCard = document.createElement('div');
+            jobCard.className = 'job-card';
+            
+            let expDisplay = '';
+            if (difficulty.type === 'box') {
+                const totalExp = difficulty.boxes * (difficulty.rewards.exp || 2);
+                expDisplay = `${totalExp} XP`;
+            } else if (difficulty.type === 'trailer') {
+                if (Array.isArray(difficulty.rewards.exp)) {
+                    expDisplay = `${difficulty.rewards.exp[0]}-${difficulty.rewards.exp[1]} XP`;
+                } else {
+                    expDisplay = '3-10 XP';
                 }
-            }));
+            }
             
-            this.currentVehicleIndex = 0;
-            this.updateCarousel();
-            this.updateDots();
-            this.updateCounter();
+            jobCard.innerHTML = `
+                <div class="job-title">${difficulty.label}</div>
+                <div class="job-description">
+                    ${difficulty.type === 'trailer' ? 'Trailer delivery job' : `Deliver ${difficulty.boxes} boxes`}
+                </div>
+                <div class="job-rewards">
+                    <span class="job-money">$${difficulty.rewards.money[0]}-${difficulty.rewards.money[1]}</span>
+                    <span class="job-exp">${expDisplay}</span>
+                    <span class="job-level">Level ${difficulty.requiredLevel}</span>
+                </div>
+            `;
+            
+            if (isUnlocked && !isActive) {
+                jobCard.addEventListener('click', () => this.startJob(key));
+                jobCard.style.cursor = 'pointer';
+            } else {
+                jobCard.style.opacity = '0.5';
+                jobCard.style.cursor = 'not-allowed';
+            }
+            
+            jobsList.appendChild(jobCard);
         }
     }
     
-    getDifficultyBadge(difficulty) {
-        const badges = {
-            'easy': 'EFFICIENT',
-            'medium': 'VERSATILE', 
-            'hard': 'HEAVY DUTY'
-        };
-        return badges[difficulty] || 'STANDARD';
+    updateActiveJobSection() {
+        const activeJobSection = document.getElementById('activeJobSection');
+        const activeJobDetails = document.getElementById('activeJobDetails');
+        
+        if (this.currentJob && this.difficulties && this.difficulties[this.currentJob.difficulty]) {
+            const difficulty = this.difficulties[this.currentJob.difficulty];
+            activeJobSection.style.display = 'block';
+            
+            let progressText = '';
+            if (difficulty.type === 'box') {
+                const delivered = (difficulty.boxes || 0) - (this.currentJob.remainingBoxes || 0);
+                const total = difficulty.boxes || 0;
+                progressText = `${delivered}/${total} boxes delivered`;
+            } else if (difficulty.type === 'trailer') {
+                progressText = 'Trailer delivery in progress';
+            }
+            
+            activeJobDetails.innerHTML = `
+                <div style="font-size: 12px; color: rgba(255, 255, 255, 0.8);">
+                    <div><strong>Job:</strong> ${difficulty.label}</div>
+                    <div><strong>Status:</strong> ${progressText}</div>
+                    ${this.currentJob.destination ? `<div><strong>Destination:</strong> ${this.currentJob.destination.name}</div>` : ''}
+                </div>
+            `;
+        } else {
+            activeJobSection.style.display = 'none';
+        }
     }
     
-    getVehicleTypeDisplay(difficulty) {
-        const types = {
-            'easy': 'Light Truck',
-            'medium': 'Box Truck',
-            'hard': 'Trailer'
-        };
-        return types[difficulty] || 'Truck';
+    startJob(difficulty) {
+        this.sendNUIMessage('startJob', { difficulty: difficulty });
     }
     
-    getDifficultyDisplay(difficulty) {
-        return difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+    cancelJob() {
+        this.sendNUIMessage('cancelJob');
     }
     
     rentVehicle() {
         const currentVehicle = this.vehicles[this.currentVehicleIndex];
         if (!currentVehicle) return;
         
-        // Enhanced visual feedback
-        const rentBtn = document.getElementById('rentBtn');
-        const btnText = rentBtn.querySelector('.btn-text');
-        const originalText = btnText.textContent;
+        const rentBtn = document.getElementById('rentVehicleBtn');
+        const originalText = rentBtn.textContent;
         
-        // Button animation
-        rentBtn.style.transform = 'scale(0.95)';
-        btnText.textContent = 'PROCESSING...';
-        rentBtn.style.background = 'linear-gradient(135deg, #ff0096 0%, #00d4ff 100%)';
-        
-        // Add loading effect to vehicle card
-        document.getElementById('vehicleCard').classList.add('loading');
+        rentBtn.textContent = 'RENTING...';
+        rentBtn.style.opacity = '0.7';
         
         setTimeout(() => {
-            rentBtn.style.transform = 'scale(1)';
-            btnText.textContent = originalText;
-            rentBtn.style.background = 'linear-gradient(135deg, #00ff87 0%, #00d4ff 100%)';
-            document.getElementById('vehicleCard').classList.remove('loading');
+            rentBtn.textContent = originalText;
+            rentBtn.style.opacity = '1';
         }, 1500);
         
-        // Send to client
         this.sendNUIMessage('rentVehicle', {
             vehicleType: currentVehicle.type,
             difficulty: currentVehicle.difficulty,
@@ -391,52 +276,18 @@ class VehicleRentalNUI {
     show() {
         this.isVisible = true;
         document.body.style.display = 'flex';
-        
-        // Animate entrance
-        const container = document.querySelector('.container');
-        container.style.animation = 'containerEnter 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
-        
-        // Stagger animations for elements
-        this.staggerElementAnimations();
-    }
-    
-    staggerElementAnimations() {
-        const elements = [
-            '.header',
-            '.stats-card',
-            '.vehicle-showcase',
-            '.actions'
-        ];
-        
-        elements.forEach((selector, index) => {
-            const element = document.querySelector(selector);
-            if (element) {
-                element.style.opacity = '0';
-                element.style.transform = 'translateY(20px)';
-                
-                setTimeout(() => {
-                    element.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                    element.style.opacity = '1';
-                    element.style.transform = 'translateY(0)';
-                }, index * 100);
-            }
-        });
+        document.getElementById('tablet').classList.remove('hidden');
     }
     
     hide() {
         this.isVisible = false;
         document.body.style.display = 'none';
+        document.getElementById('tablet').classList.add('hidden');
     }
     
     closeNUI() {
-        // Animate exit
-        const container = document.querySelector('.container');
-        container.style.animation = 'containerExit 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards';
-        
-        setTimeout(() => {
-            this.hide();
-            this.sendNUIMessage('closeNUI');
-        }, 600);
+        this.hide();
+        this.sendNUIMessage('closeNUI');
     }
     
     sendNUIMessage(action, data = {}) {
@@ -458,63 +309,104 @@ class VehicleRentalNUI {
     }
 }
 
-// Add exit animation to CSS
-const exitAnimation = document.createElement('style');
-exitAnimation.textContent = `
-    @keyframes containerExit {
-        0% {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-        }
-        100% {
-            opacity: 0;
-            transform: scale(0.8) translateY(-50px);
-        }
-    }
-`;
-document.head.appendChild(exitAnimation);
-
 // Initialize the NUI system
-const vehicleRentalNUI = new VehicleRentalNUI();
+const truckerTabletNUI = new TruckerTabletNUI();
 
 // Handle messages from Lua
 window.addEventListener('message', (event) => {
     const data = event.data;
     
+    console.log('Received message:', data); // Debug log
+    
     switch(data.action) {
+        case 'openJobMenu':
+            console.log('Opening job menu'); // Debug log
+            truckerTabletNUI.playerData = data.playerStats;
+            truckerTabletNUI.difficulties = data.difficulties;
+            truckerTabletNUI.currentJob = data.currentJob;
+            truckerTabletNUI.updatePlayerInfo(data.playerStats);
+            truckerTabletNUI.updateJobsList();
+            truckerTabletNUI.updateActiveJobSection();
+            truckerTabletNUI.switchTab('jobs');
+            truckerTabletNUI.show();
+            break;
+            
         case 'openRentMenu':
-            vehicleRentalNUI.updatePlayerInfo(data.playerData);
-            vehicleRentalNUI.updateVehicles(data.vehicles);
-            vehicleRentalNUI.show();
+            console.log('Opening rent menu'); // Debug log
+            truckerTabletNUI.playerData = data.playerData;
+            truckerTabletNUI.updatePlayerInfo(data.playerData);
+            if (data.vehicles) {
+                truckerTabletNUI.vehicles = data.vehicles.map(vehicle => ({
+                    name: vehicle.name || vehicle.type.toUpperCase(),
+                    description: vehicle.description || `${vehicle.type} for deliveries`,
+                    image: vehicle.image || `https://via.placeholder.com/300x150/1a1a1a/3b82f6?text=${vehicle.name.replace(/\s+/g, '+').toUpperCase()}`,
+                    type: vehicle.type,
+                    difficulty: vehicle.difficulty,
+                    specs: {
+                        type: vehicle.difficulty === 'hard' ? 'Trailer' : vehicle.difficulty === 'medium' ? 'Box Truck' : 'Light Truck',
+                        difficulty: vehicle.difficulty.charAt(0).toUpperCase() + vehicle.difficulty.slice(1)
+                    }
+                }));
+                truckerTabletNUI.updateVehicleDisplay();
+                truckerTabletNUI.updateVehicleCounter();
+            }
+            truckerTabletNUI.switchTab('rental');
+            truckerTabletNUI.show();
             break;
             
         case 'hideUI':
-            vehicleRentalNUI.hide();
+            console.log('Hiding UI'); // Debug log
+            truckerTabletNUI.hide();
             break;
             
         case 'updatePlayerData':
-            vehicleRentalNUI.updatePlayerInfo(data.playerData);
-            break;
-            
-        case 'updateVehicles':
-            vehicleRentalNUI.updateVehicles(data.vehicles);
+            truckerTabletNUI.updatePlayerInfo(data.playerData);
             break;
     }
 });
 
-// Development testing (remove in production)
+// Development testing
 if (!window.invokeNative) {
-    console.log('Running in development mode - Beautiful 2025 Design');
+    console.log('Running in development mode - Trucker Tablet');
     
-    // Test data with enhanced information
+    // Test data
     setTimeout(() => {
-        vehicleRentalNUI.updatePlayerInfo({
-            name: 'Alex Rodriguez',
-            level: 8,
-            experience: 1250,
-            total_deliveries: 147,
-            total_earnings: 89750
+        truckerTabletNUI.updatePlayerInfo({
+            name: 'Test Driver',
+            level: 5,
+            experience: 750,
+            total_deliveries: 25,
+            total_earnings: 15000
         });
-        vehicleRentalNUI.show();
+        
+        truckerTabletNUI.difficulties = {
+            easy: {
+                label: 'Local Deliveries',
+                requiredLevel: 1,
+                type: 'box',
+                vehicle: 'mule',
+                boxes: 6,
+                rewards: { money: [800, 1200], exp: 2 }
+            },
+            medium: {
+                label: 'Citywide Logistics',
+                requiredLevel: 3,
+                type: 'box',
+                vehicle: 'benson',
+                boxes: 10,
+                rewards: { money: [1400, 2000], exp: 2 }
+            },
+            hard: {
+                label: 'Long-Haul Trailer',
+                requiredLevel: 5,
+                type: 'trailer',
+                vehicle: 'phantom3',
+                trailer: 'trailers',
+                rewards: { money: [2200, 3200], exp: [3, 10] }
+            }
+        };
+        
+        truckerTabletNUI.updateJobsList();
+        truckerTabletNUI.show();
     }, 1000);
 }
