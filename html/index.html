@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Rental System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Background overlay -->
+    <div id="background-overlay"></div>
+    
+    <!-- Main rental panel -->
+    <div id="rental-panel" class="rental-panel">
+        <!-- Header with glowing title -->
+        <div class="panel-header">
+            <h1 class="panel-title">Vehicle Rental</h1>
+        </div>
+
+        <!-- Player Info Section -->
+        <div class="player-info-section">
+            <div class="player-details">
+                <div class="player-name" id="playerName">Driver Name</div>
+                <div class="player-level" id="playerLevel">Level 5</div>
+            </div>
+            
+            <!-- EXP Bar -->
+            <div class="exp-container">
+                <div class="exp-label">Experience</div>
+                <div class="exp-bar">
+                    <div class="exp-fill" id="expFill"></div>
+                    <div class="exp-glow"></div>
+                </div>
+                <div class="exp-text" id="expText">750 / 1000 EXP</div>
+            </div>
+        </div>
+
+        <!-- Vehicle Image Carousel -->
+        <div class="vehicle-carousel">
+            <button class="carousel-btn prev-btn" id="prevBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            
+            <div class="vehicle-display">
+                <div class="vehicle-image" id="vehicleImage">
+                    <img src="https://via.placeholder.com/300x180/1a1a1a/00ffff?text=Vehicle+Image" alt="Vehicle" id="currentVehicleImg">
+                </div>
+                <div class="vehicle-info">
+                    <h3 class="vehicle-name" id="vehicleName">Phantom Truck</h3>
+                    <p class="vehicle-description" id="vehicleDescription">Heavy-duty truck for long haul deliveries</p>
+                </div>
+            </div>
+            
+            <button class="carousel-btn next-btn" id="nextBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            
+            <!-- Dot indicators -->
+            <div class="carousel-dots" id="carouselDots">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="rent-btn" id="rentBtn">
+                <span class="btn-text">Rent Vehicle - FREE</span>
+                <div class="btn-glow"></div>
+            </button>
+            <button class="cancel-btn" id="cancelBtn">
+                <span class="btn-text">Cancel</span>
+                <div class="btn-glow"></div>
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
