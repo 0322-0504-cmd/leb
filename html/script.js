@@ -56,8 +56,17 @@ function getTier(level) {
 
 function setVisible(show) {
   state.isVisible = !!show;
-  UI.panel.classList.toggle('is-hidden', !show);
-  UI.overlay.classList.toggle('is-hidden', !show);
+  if (show) {
+    UI.panel.style.display = 'grid';
+    UI.overlay.style.display = 'block';
+    UI.panel.classList.remove('is-hidden');
+    UI.overlay.classList.remove('is-hidden');
+  } else {
+    UI.panel.style.display = 'none';
+    UI.overlay.style.display = 'none';
+    UI.panel.classList.add('is-hidden');
+    UI.overlay.classList.add('is-hidden');
+  }
 }
 
 function switchTab(tab) {
@@ -217,9 +226,10 @@ window.addEventListener('message', (e) => {
   }
 });
 
-// Dev preview
+// Dev preview - DISABLED for FiveM use
 if (!window.invokeNative) {
+  console.log('Running in development mode - NUI hidden by default');
   updatePlayer({ name: 'Alex', level: 7, experience: 320 });
   buildCarousel();
-  setVisible(true);
+  // setVisible(true); // REMOVED - Don't auto-show NUI
 }
