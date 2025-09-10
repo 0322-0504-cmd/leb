@@ -65,13 +65,24 @@ RegisterNetEvent('qbx_truckerjob:registerRentedVehicle', function(plate, vehType
     local src = source
     plateToOwner[plate] = src
     plateToVehicleType[plate] = vehType
+    print('Server: Registered rental vehicle for player', src, 'plate:', plate, 'type:', vehType) -- Debug
 end)
 
 -- Return rental at depot
 lib.callback.register('qbx_truckerjob:returnRental', function(src, plate)
-    if not plate or plateToOwner[plate] ~= src then
-        return { success = false, message = 'Not your rental' }
+    print('Server: Return rental request from player', src, 'for plate:', plate) -- Debug
+    print('Server: Current rental owners:', json.encode(plateToOwner)) -- Debug
+    
+    if not plate then
+        return { success = false, message = 'No plate provided' }
     end
+    
+    if plateToOwner[plate] ~= src then
+        print('Server: Plate', plate, 'not owned by player', src, 'owned by:', plateToOwner[plate]) -- Debug
+        return { success = false, message = 'Not your rental vehicle' }
+    end
+    
+    print('Server: Successfully returning rental', plate, 'for player', src) -- Debug
     plateToOwner[plate] = nil
     plateToVehicleType[plate] = nil
     return { success = true }

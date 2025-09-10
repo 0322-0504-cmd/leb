@@ -1,17 +1,17 @@
 /* Trucker Job & Rental — Cyber Glass UI - LARGER SIZE */
 
 :root {
-  --bg-overlay: rgba(4, 8, 16, 0.55);
-  --glass: rgba(9, 18, 31, 0.35);
-  --glass-strong: rgba(9, 18, 31, 0.55);
-  --text: #e6f1ff;
-  --muted: #9fb3c8;
-  --cyan: #22e1ff;
-  --teal: #00ffa3;
-  --green: #22c55e;
+  --bg-overlay: rgba(0, 0, 0, 0.75);
+  --glass: rgba(15, 23, 42, 0.85);
+  --glass-strong: rgba(30, 41, 59, 0.9);
+  --text: #ffffff;
+  --muted: #cbd5e1;
+  --cyan: #0ea5e9;
+  --teal: #06b6d4;
+  --green: #10b981;
   --red: #ef4444;
   --yellow: #f59e0b;
-  --shadow: 0 20px 60px rgba(0, 255, 200, 0.06), 0 6px 24px rgba(0, 0, 0, 0.35);
+  --shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 10px 30px rgba(59, 130, 246, 0.1);
 }
 
 * { box-sizing: border-box; }
@@ -70,8 +70,8 @@ body {
   position: absolute;
   inset: -2px;
   border-radius: 26px;
-  background: radial-gradient(60% 40% at 50% 0%, rgba(34, 225, 255, 0.18), transparent 60%),
-              radial-gradient(60% 40% at 50% 100%, rgba(0, 255, 163, 0.12), transparent 60%);
+  background: radial-gradient(60% 40% at 50% 0%, rgba(59, 130, 246, 0.2), transparent 60%),
+              radial-gradient(60% 40% at 50% 100%, rgba(16, 185, 129, 0.15), transparent 60%);
   filter: blur(18px);
   z-index: -1;
   animation: neonPulse 4s ease-in-out infinite;
@@ -162,8 +162,17 @@ body {
 .tab.is-active { color: var(--text); border-color: rgba(34, 225, 255, 0.35); box-shadow: 0 0 18px rgba(34, 225, 255, 0.12) inset; }
 .tab:hover:not(.is-active) { border-color: rgba(255, 255, 255, 0.15); background: rgba(255, 255, 255, 0.08); }
 
-/* Views */
-.content { position: relative; overflow: hidden; border-radius: 16px; border: 1px solid rgba(255,255,255,.06); background: rgba(255,255,255,.02); padding: 16px; }
+/* Views - Add scrolling */
+.content { 
+  position: relative; 
+  overflow-y: auto; 
+  overflow-x: hidden;
+  border-radius: 16px; 
+  border: 1px solid rgba(255,255,255,.15); 
+  background: rgba(255,255,255,.05); 
+  padding: 16px; 
+  max-height: 400px;
+}
 .view { display: none; height: 100%; }
 .view.is-active { display: block; }
 
@@ -284,6 +293,26 @@ body {
 }
 .btn--red:hover { 
   box-shadow: 0 0 30px rgba(239,68,68,.35), inset 0 0 24px rgba(239,68,68,.18); 
+}
+
+/* Custom scrollbar */
+.content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--cyan), var(--teal));
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--teal), var(--green));
 }
 
 /* Hidden helpers */

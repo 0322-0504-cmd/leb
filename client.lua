@@ -370,6 +370,7 @@ RegisterCommand('returnrental', function(source, args, rawCommand)
     end
 
     local plate = GetVehicleNumberPlateText(veh)
+    print('Client: Attempting to return rental with plate:', plate) -- Debug
     local ok = lib.callback.await('qbx_truckerjob:returnRental', false, plate)
     if ok and ok.success then
         SetEntityAsMissionEntity(veh, true, true)
@@ -631,6 +632,9 @@ RegisterNUICallback('rentVehicle', function(data, cb)
         giveVehicleKeys(veh, plate)
         -- Register rental vehicle
         TriggerServerEvent('qbx_truckerjob:registerRentedVehicle', plate, vehicleType)
+        
+        -- Debug: Confirm registration
+        print('Registered rental vehicle:', plate, vehicleType)
 
         -- NO auto-attach for trailer jobs - trailer will be at pickup location
     else
