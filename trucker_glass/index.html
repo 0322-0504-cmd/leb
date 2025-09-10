@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trucker Job & Rental - Glass</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="overlay"></div>
+
+  <div class="panel" id="panel">
+    <header class="panel__header">
+      <h1 class="title">Trucker Job & Rental</h1>
+      <button class="icon-btn icon-btn--close" id="btnClose" aria-label="Close">×</button>
+    </header>
+
+    <section class="player">
+      <div class="player__row">
+        <div class="player__meta">
+          <div class="player__name" id="playerName">Driver</div>
+          <div class="player__badges">
+            <span class="badge" id="playerLevel">Lv 1</span>
+            <span class="badge badge--tier" id="playerTier">Rookie</span>
+          </div>
+        </div>
+        <div class="player__money">
+          <div class="money" id="playerEarnings">$0</div>
+          <div class="muted">Earned</div>
+        </div>
+      </div>
+      <div class="exp">
+        <div class="exp__head">
+          <span>EXP</span>
+          <span id="expText">0 / 100</span>
+        </div>
+        <div class="progress progress--exp">
+          <div class="progress__fill" id="expFill"></div>
+        </div>
+      </div>
+    </section>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="rental">Rental</button>
+      <button class="tab" data-tab="jobs">Jobs</button>
+      <button class="tab" data-tab="delivery">Delivery</button>
+    </nav>
+
+    <main class="content">
+      <!-- Rental -->
+      <section class="view active" id="view-rental">
+        <div class="carousel">
+          <button class="carousel__arrow" id="carPrev" aria-label="Previous">‹</button>
+          <div class="carousel__stage">
+            <img id="carImage" src="./images/phantom3.png" alt="Vehicle" />
+          </div>
+          <button class="carousel__arrow" id="carNext" aria-label="Next">›</button>
+        </div>
+        <div class="dots" id="carDots"></div>
+        <div class="vinfo">
+          <div class="vinfo__title" id="carName">Phantom 3</div>
+          <div class="vinfo__meta">
+            <span class="chip" id="carType">Trailer</span>
+            <span class="chip chip--lvl" id="carReq">Req Lv 5</span>
+            <span class="chip chip--free">Free</span>
+          </div>
+          <div class="vinfo__desc" id="carDesc">Heavy-duty long-haul prime mover.</div>
+          <div class="vinfo__rewards" id="carRewards">$2200-$3200 • 3-10 XP</div>
+        </div>
+      </section>
+
+      <!-- Jobs -->
+      <section class="view" id="view-jobs">
+        <div class="jobgrid" id="jobsGrid"></div>
+      </section>
+
+      <!-- Delivery -->
+      <section class="view" id="view-delivery">
+        <div class="delivery">
+          <div class="delivery__row">
+            <div>
+              <div class="muted">Destination</div>
+              <div class="delivery__dest" id="deliveryDest">N/A</div>
+            </div>
+            <div class="timer" id="deliveryTimer">00:00</div>
+          </div>
+          <div class="progress" title="Progress">
+            <div class="progress__fill" id="deliveryFill" style="width:0%"></div>
+          </div>
+          <div class="delivery__status" id="deliveryStatus">Waiting for job…</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <button class="btn btn--ghost" id="btnCancel">Cancel</button>
+      <button class="btn btn--cyan" id="btnRent">Rent Vehicle</button>
+      <button class="btn btn--green" id="btnStart">Start Job</button>
+    </footer>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
